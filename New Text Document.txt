@@ -1,0 +1,20 @@
+npm install @ckeditor/ckeditor5-build-classic
+npm install @ckeditor/ckeditor5-react
+npm install @react-oauth/google
+npm install @testing-library/jest-dom
+npm install @testing-library/react
+npm install @testing-library/user-event
+npm install ckeditor5
+npm install ckeditor5-premium-features
+npm install firebase
+npm install emailjs-com
+npm install react-helmet
+
+
+
+
+
+
+
+
+
