@@ -17,7 +17,6 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Governments() {
   const navigate = useNavigate();
   const role = Cookies.get("role");
-  // const role = localStorage.getItem("role")
   const [load, setLoad] = useState(false);
   const [loadId, setLoadId] = useState(false);
 
@@ -58,7 +57,7 @@ export default function Governments() {
   const fetchGov = async () => {
     try {
       setOverlay(true);
-      const response = await api.get("/governorates", {
+      const response = await api.get("/governorates/authGov", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -78,7 +77,7 @@ export default function Governments() {
   const handleDelete = async (id) => {
     try {
       setLoadId(true);
-      const response = await api.post(`/deleteGovernorate/${id}`, null, {
+      await api.delete(`/governorates/${id}`,{
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,14 +98,20 @@ export default function Governments() {
       // Append other form fields
       for (const [key, value] of Object.entries(formData)) {
         if (key !== "image") {
-          allFormData.append(key, value);
+          if (key === "url") {
+            allFormData.append(key, value.replace(/ /g, "-"));
+          }
+          else {
+            allFormData.append(key, value);
+          }
         }
       }
       if (image) {
         allFormData.append("image", formData.image[0]);
       }
+
       try {
-        const response = await api.post("/addGovernorate", allFormData, {
+        await api.post("/governorates", allFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
@@ -243,12 +248,10 @@ export default function Governments() {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>#</th>
             <th>اسم المحافظة</th>
             <th>الاسم بالانجليزى</th>
             <th>عنوان الصفحه</th>
             <th>الصوره</th>
-            {/* <th>ميتا دسكريب</th> */}
             <th>عنوان الميتا</th>
             <th>الرابط</th>
             <th colSpan={2} className="text-center">
@@ -261,8 +264,7 @@ export default function Governments() {
         ) : (
           <tbody>
             {governorates.map((item, index) => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
+              <tr key={item._id}>
                 <td>{item.name}</td>
                 <td>{item.english_name}</td>
                 <td>{item.h1_title}</td>
@@ -303,7 +305,7 @@ export default function Governments() {
                   <DeleteItem
                     id={selectedItemId}
                     setId={setSelectedItemId}
-                    itemId={item.id}
+                    itemId={item._id}
                     DeleteFun={handleDelete}
                     load={loadId}
                   />

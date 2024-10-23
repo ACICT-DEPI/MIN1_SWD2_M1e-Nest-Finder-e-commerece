@@ -26,7 +26,7 @@ usePageSEO({
   const handelSearch = async () => {
     try {
       setOverlay(true);
-      const response = await api.get(`/getAdsByUser`, {
+      const response = await api.get(`/ads/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         }

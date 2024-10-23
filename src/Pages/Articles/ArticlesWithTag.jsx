@@ -20,11 +20,10 @@ export default function ArticlesWithTag() {
     const fetchArticle = async () => {
       try {
         setOverlay(true)
-        const response = await api.post(`/getPostsByTag/${tag.replace(/-/g," ")}`, {
-          page: currentPage,
-        });
-        setArticles(response.data.data.posts);
-        setTotalPages(response.data.data.total_pages);
+        const response = await api.get(`/articles/tag/${tag.replace(/-/g," ")}?page=${currentPage}`);
+        console.log(response.data);
+        setArticles(response.data.data);
+        setTotalPages(response.data.total_pages);
       } catch (error) {
         setArticles([]);
         console.log(error);

@@ -35,18 +35,18 @@ export default function EditArticle() {
   useEffect(() => {
     const fetchArticle = async () => {
       setFormData({
-        article_url: Article.Article_url,
-        title: Article.Title,
+        article_url: Article.article_url,
+        title: Article.title,
         category_id: Article.category_id,
         key_words: Article.key_words,
         meta_description: Article.meta_description,
-        article_id: Article.id,
+        article_id: Article._id,
         finished: "",
       });
       setTagsInBasket(Article.tags);
-      setArticleImage(Article.Article_image);
-      setArticle_body(Article.Article_body);
-      setStaticBody(Article.Article_body);
+      setArticleImage(Article.article_image);
+      setArticle_body(Article.article_body);
+      setStaticBody(Article.article_body);
     };
     if (Article) fetchArticle();
   }, [Article]);
@@ -69,16 +69,6 @@ export default function EditArticle() {
     });
   };
 
-  function extractImageUrls(htmlString) {
-    const urls = [];
-    const regex = /<img[^>]+src="([^">]+)"/g;
-    let match;
-    while ((match = regex.exec(htmlString)) !== null) {
-      urls.push(match[1]);
-    }
-    return urls;
-  }
-
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     if (type === "file") {
@@ -97,7 +87,7 @@ export default function EditArticle() {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await api.get("/getallcategories");
+        const response = await api.get("/categories");
         setCategories(response.data.data);
       } catch (error) {
         console.log(error);
@@ -119,18 +109,17 @@ export default function EditArticle() {
         formData.key_words &&
         formData.category_id
       ) {
-        const imageUrls = extractImageUrls(article_body);
         const formDataToSend = new FormData();
         if (article_image) {
           formDataToSend.append("article_image", article_image);
         }
-        if (article_body !== Article.Article_body) {
+        if (article_body !== Article.article_body) {
           formDataToSend.append("article_body", article_body);
         }
-        if (formData.article_url !== Article.Article_url) {
+        if (formData.article_url !== Article.article_url) {
           formDataToSend.append("article_url", formData.article_url.trim().replace(/ /g, "-"));
         }
-        if (formData.title !== Article.Title) {
+        if (formData.title !== Article.title) {
           formDataToSend.append("title", formData.title);
         }
         if (formData.category_id !== Article.category_id) {
@@ -143,15 +132,14 @@ export default function EditArticle() {
           formDataToSend.append("meta_description", formData.meta_description);
         }
         formDataToSend.append("finished", formData.finished);
-        if(TagsInBasket.length>0){
-          let tags = TagsInBasket.join(",");
-          formDataToSend.append("tags", tags); 
-        }
+        
+        formDataToSend.append("tags",TagsInBasket ); 
+
         // Set Post
         try {
           setLoad(true);
-          await api.post(
-            `/updatePost/${formData.article_id}`,
+          await api.patch(
+            `/articles/${formData.article_id}`,
             formDataToSend,
             {
               headers: {
@@ -160,36 +148,19 @@ export default function EditArticle() {
               },
             }
           );
-          //Confirm images url
-          try {
-            await api.post(
-              `/updatePost_images/${formData.article_id}`,
-              { image_paths: imageUrls },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-            if (formData.finished) {
-              setAlert({ msg: "تم تعديل المدونة", variant: 1 });
-              setTimeout(() => {
-                navigate("/dashboard/Blogs");
-              }, 2000);
-            } else {
-              setAlert({ msg: "تم تعديل المسودة", variant: 1 });
-              setTimeout(() => {
-                navigate("/dashboard/Drafts");
-              }, 2000);
-            }
-            setShow(true);
-          } catch (error) {
-            console.log(error)        
-              setAlert({ msg: "حدث خطا اثناء تعديل المدونة", variant: 2 });     
-              setShow(true)       
+          if (formData.finished) {
+            setAlert({ msg: "تم تعديل المدونة", variant: 1 });
+            setTimeout(() => {
+              navigate("/dashboard/Blogs");
+            }, 2000);
+          } else {
+            setAlert({ msg: "تم تعديل المسودة", variant: 1 });
+            setTimeout(() => {
+              navigate("/dashboard/Drafts");
+            }, 2000);
           }
-        } catch (error) {
+          setShow(true);
+        } catch (error) {  
           console.log(error)
           if (error.response.status === 422) {
             setAlertArError(error.response.data.data)
@@ -203,6 +174,10 @@ export default function EditArticle() {
               Cookies.remove(cookieName);
             });
             setShow(true);
+          }
+          else{
+            setAlert({ msg: "حدث خطا اثناء تعديل المدونة", variant: 2 });     
+            setShow(true)
           }
         } finally {
           setLoad(false);
@@ -313,7 +288,7 @@ export default function EditArticle() {
               >
                 <option value="">اختر نوع المدونة</option>
                 {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
+                  <option key={category._id} value={category._id}>
                     {category.category_name}
                   </option>
                 ))}

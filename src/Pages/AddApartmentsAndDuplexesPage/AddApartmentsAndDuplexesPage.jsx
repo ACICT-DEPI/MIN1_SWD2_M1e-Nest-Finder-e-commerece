@@ -1,43 +1,26 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../../Components/Header/Header.jsx";
 import Footer from "../../Components/Footer/Footer.jsx";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMapEvents,
-} from "react-leaflet";
+import {MapContainer,TileLayer,Marker,Popup,useMapEvents,} from "react-leaflet";
 import L from "leaflet";
-import {
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  ProgressBar,
-} from "react-bootstrap";
+import {  Form,  Button,  Container,  Row,Col,  ProgressBar} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHome,
-  faDollarSign,
-  faBed,
-  faBath,
-  faRulerCombined,
-} from "@fortawesome/free-solid-svg-icons";
+import {faHome,faDollarSign,faBed,faBath,faRulerCombined} from "@fortawesome/free-solid-svg-icons";
 import api from "../../API/ApiLink.jsx";
 import Cookies from "js-cookie";
 import "./AddApartmentsAndDuplexesPage.css";
 import LoadingBtn from "../../Components/LoadingBtn.jsx";
 import AlertMessage from "../../Components/Alert/Alert.jsx";
 import { useNavigate } from "react-router-dom";
-
 import { Autocomplete, TextField } from "@mui/material";
 import AlertArError from "../../Components/Alert/AlertArError.jsx";
 
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
+
 const AddApartmentsAndDuplexesPage = () => {
-  const token = Cookies.get("token");
+ const token = Cookies.get("token");
   const [load1, setLoad1] = useState(false);
   const [load2, setLoad2] = useState(false);
   const [show, setShow] = useState(false);
@@ -48,11 +31,11 @@ const AddApartmentsAndDuplexesPage = () => {
   const [alertArError, setAlertArError] = useState([]);
 
   const myIcon = new L.Icon({
-    iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    iconUrl:markerIcon,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+    shadowUrl:markerShadow,
     shadowSize: [41, 41],
   });
 
@@ -80,7 +63,7 @@ const AddApartmentsAndDuplexesPage = () => {
     floor_number: "", //👍
     compound_name: "", //👍
     primary_picture: "", //👍
-    "images[]": "", //👍
+    "images": "", //👍
     video_link: "", //👍
     full_address: "", //👍
     governorate: "", //👍
@@ -90,10 +73,10 @@ const AddApartmentsAndDuplexesPage = () => {
     deliver_date: "", //👍
     finishing_type: "", //👍
     furnished: "", //👍
-    "facilities[]": [], //👍
-    "features[]": [], //👍
-    "services[]": [], //👍
-    "devices[]": [], //👍
+    "facilities": [], //👍
+    "features": [], //👍
+    "services": [], //👍
+    "devices": [], //👍
     sub_category: "",
   });
 
@@ -128,15 +111,19 @@ const AddApartmentsAndDuplexesPage = () => {
 
   const [governorates, setGovernorates] = useState([]);
   // API for get data to choose from it
+
+  // Gov
   useEffect(() => {
     const fetchGov = async () => {
       try {
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response.data)
         setGovernorates(response.data.data);
+        console.log(response.data)
       } catch (error) {
         if (error.response.status === 401) {
           window.scrollTo({ top: 0, behavior: "smooth" });
@@ -162,7 +149,7 @@ const AddApartmentsAndDuplexesPage = () => {
       })["id"];
 
       try {
-        const response = await api.get(`/governorates/${govId}/cities`, {
+        const response = await api.get(`/cities/${govId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -182,7 +169,7 @@ const AddApartmentsAndDuplexesPage = () => {
         return e.name === formData.city;
       })["id"];
       try {
-        const response = await api.get(`/governorates/city/${cityId}/regions`, {
+        const response = await api.get(`regions/${cityId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -194,14 +181,15 @@ const AddApartmentsAndDuplexesPage = () => {
     };
     fetchCity();
   }, [formData.city, cities, token]);
+
   // Street
   useEffect(() => {
     const fetchStreet = async () => {
-      const streetId = regions.find((e) => {
+      const regionId = regions.find((e) => {
         return e.name === formData.region;
       })["id"];
       try {
-        const response = await api.get(`/streetsByRegion/${streetId}`, {
+        const response = await api.get(`/streets/${regionId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -222,7 +210,7 @@ const AddApartmentsAndDuplexesPage = () => {
       })["id"];
       try {
         setCompoundLoad(true);
-        const response = await api.get(`/get_compounds_by_city/${cityId}`, {
+        const response = await api.get(`/compounds/${cityId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -256,7 +244,7 @@ const AddApartmentsAndDuplexesPage = () => {
     if (type === "file") {
       if (name === "primary_picture") {
         setPrimary_picture(files[0]);
-      } else if (name === "images[]") {
+      } else if (name === "images") {
         setImages(Array.from(files));
       }
       setFormData({
@@ -271,10 +259,10 @@ const AddApartmentsAndDuplexesPage = () => {
     }
   };
   const fieldMapping = {
-    مرافق: "facilities[]",
-    ميزات: "features[]",
-    خدمات: "services[]",
-    أجهزة: "devices[]",
+    مرافق: "facilities",
+    ميزات: "features",
+    خدمات: "services",
+    أجهزة: "devices",
   };
   const toggleAmenity = (category, amenity) => {
     const fieldName = fieldMapping[category];
@@ -358,7 +346,7 @@ const AddApartmentsAndDuplexesPage = () => {
 
         // Append other form fields
         for (const [key, value] of Object.entries(formData)) {
-          if (key !== "images[]" && key !== "primary_picture") {
+          if (key !== "images" && key !== "primary_picture") {
             allFormData.append(key, value);
           }
         }
@@ -366,7 +354,7 @@ const AddApartmentsAndDuplexesPage = () => {
         // Append images
         if (images) {
           for (let i = 0; i < images.length; i++) {
-            allFormData.append("images[]", formData["images[]"][i]);
+            allFormData.append("images", formData["images"][i]);
           }
         }
 
@@ -379,13 +367,13 @@ const AddApartmentsAndDuplexesPage = () => {
         allFormData.append("longitude", position[1]);
 
         // Post the data
-        const response = await api.post("/AddProperties", allFormData, {
+        const response = await api.post("/properties", allFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         });
-        const prop_id = response.data.data.property_id;
+        const prop_id = response.data.data._id;
         setFormData2({ ...formData2, property_id: prop_id });
         // للانتقال لاخر صفحه و حفظ الاعلان
         setCurrentPage(currentPage + 1);
@@ -421,10 +409,9 @@ const AddApartmentsAndDuplexesPage = () => {
       setShow(true);
     } else {
       setLoad2(true);
-      const token = Cookies.get("token");
       try {
-        const response = await api.post(
-          "/makeAd",
+        await api.post(
+          "/ads",
           {
             ...formData2,
           },
@@ -436,16 +423,16 @@ const AddApartmentsAndDuplexesPage = () => {
           }
         );
         // ملئ بيانات التواصل مباشرة
-        const user_type = Cookies.get("user_type") || null;
-        const phone = Cookies.get("phone") || null;
-        const whats_phone = Cookies.get("whats_phone") || null;
-        if (phone === null) {
+        const user_type = Cookies.get("user_type") || "";
+        const phone = Cookies.get("phone") || "";
+        const whats_phone = Cookies.get("whats_phone") || "";
+        if (phone === "") {
           Cookies.set("phone", formData2.phone);
         }
-        if (user_type === null) {
+        if (user_type === "") {
           Cookies.set("user_type", formData2.advertiser_type);
         }
-        if (whats_phone === null) {
+        if (whats_phone === "") {
           Cookies.set("whats_phone", formData2.whats_phone);
         }
 
@@ -956,11 +943,11 @@ const AddApartmentsAndDuplexesPage = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
 
-                        <Form.Group controlId="images[]" className="mb-3">
+                        <Form.Group controlId="images" className="mb-3">
                           <Form.Label>قم بتحميل باقي الصور</Form.Label>
                           <Form.Control
                             type="file"
-                            name="images[]"
+                            name="images"
                             onChange={handleChange}
                             multiple
                           />

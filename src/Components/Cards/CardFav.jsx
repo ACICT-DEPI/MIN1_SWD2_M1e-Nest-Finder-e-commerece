@@ -51,6 +51,7 @@ export default function CardFav({ properties, overlay }) {
   const handleLove = async (id, index) => {
     setLoadId(id);
     try {
+      //OLD
       await api.post(
         "/flip-favorite",
         { ad_id: id },
@@ -133,7 +134,7 @@ export default function CardFav({ properties, overlay }) {
                         {item.ad.property.images.map((image, idx) => (
                           <div>
                             <img
-                              src={image.image}
+                              src={image}
                               alt={`imgCard-${idx}`}
                               key={idx}
                               style={{ width: "100%", height: "300px" }}
@@ -152,9 +153,9 @@ export default function CardFav({ properties, overlay }) {
                       </div>
                     )}
                   </Link>
-                  <h6 style={{ color: "#0d6efd" }} className="my-1">
+                  {/* <h6 style={{ color: "#0d6efd" }} className="my-1">
                     الصور المتاحة لهذا العقار
-                  </h6>
+                  </h6> */}
                   {/* وسائل التواصل */}
                   <div className="SocialContactCont">
                     <a href={`tel:+2${item.ad.phone}`}>
@@ -184,7 +185,7 @@ export default function CardFav({ properties, overlay }) {
                       }&text=${encodeURIComponent(
                         "مرحباً، أنا مهتم بعقارك الموجود على Nest Finder.: "
                       )}${encodeURIComponent(
-                        `http://varnda.com/property/${encodeURIComponent(
+                        `https://depi-final-project.vercel.app//property/${encodeURIComponent(
                           item.ad.slug
                         )}`
                       )}`}
@@ -254,7 +255,7 @@ export default function CardFav({ properties, overlay }) {
                                 color: "black",
                               }}
                             >
-                              {item.ad.property["Sub Category"]}
+                              {item.ad.property.sub_category}
                             </span>
                           </Col>
                           <Col
@@ -333,7 +334,7 @@ export default function CardFav({ properties, overlay }) {
                         </Row>
                         <Row>
                           <Col style={{ color: "black" }} className="my-1">
-                            <h2>{item.ad.property["Arabic Name"]}</h2>
+                            <h2>{item.ad.property.name_ad_ar}</h2>
                           </Col>
                         </Row>
                         <Row>
@@ -401,9 +402,9 @@ export default function CardFav({ properties, overlay }) {
                     {item.ad.property.images.length > 1 ? (
                       <Slider {...settings}>
                         {item.ad.property.images.map((image, idx) => (
-                          <div>
+                          <div key={idx}>
                             <img
-                              src={image.image}
+                              src={image}
                               alt={`imgCard-${idx}`}
                               key={idx}
                               style={{ width: "100%", height: "300px" }}
@@ -414,7 +415,7 @@ export default function CardFav({ properties, overlay }) {
                     ) : (
                       <div>
                         <img
-                          src={item.ad.property.images[0].image}
+                          src={item.ad.property.images[0]}
                           alt={`صوره الاعلان`}
                           key={index}
                           style={{ width: "100%", height: "300px" }}
@@ -450,7 +451,7 @@ export default function CardFav({ properties, overlay }) {
                       }&text=${encodeURIComponent(
                         "مرحباً، أنا مهتم بعقارك الموجود على Nest Finder.: "
                       )}${encodeURIComponent(
-                        `http://varnda.com/property/${encodeURIComponent(
+                        `https://depi-final-project.vercel.app//property/${encodeURIComponent(
                           item.ad.slug
                         )}`
                       )}`}

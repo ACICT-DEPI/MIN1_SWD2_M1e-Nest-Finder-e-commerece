@@ -33,6 +33,8 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom"; //
 import DeleteImage from "../../../Components/DeleteImage/DeleteImage.jsx"; //
 import AlertArError from "../../../Components/Alert/AlertArError.jsx";
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
 
 const EditNewCemeteries = () => {
   const location = useLocation(); //
@@ -59,7 +61,7 @@ const EditNewCemeteries = () => {
     bathrooms: "", //👍
     floor_number: "", //👍
     primary_picture: "", //👍
-    "images[]": "", //👍
+    "images": "", //👍
     video_link: "", //👍
     full_address: "", //👍
     governorate: "", //👍
@@ -71,10 +73,10 @@ const EditNewCemeteries = () => {
     deliver_date: "", //👍
     finishing_type: "", //👍
     furnished: "", //👍
-    "facilities[]": [], //👍
-    "features[]": [], //👍
-    "services[]": [], //👍
-    "devices[]": [], //👍
+    "facilities": [], //👍
+    "features": [], //👍
+    "services": [], //👍
+    "devices": [], //👍
     sub_category: "",
     //ADS
     advertiser_type: "",
@@ -87,9 +89,9 @@ const EditNewCemeteries = () => {
     const fetchAd = async () => {
       setFormData({
         id: Ad.id,
-        name_ad_ar: Ad.property["Arabic Name"],
+        name_ad_ar: Ad.property.name_ad_ar,
         details_ar: Ad.property.details_ar,
-        type: Ad.property.Type,
+        type: Ad.property.type,
         price: Ad.property.price,
         discount: Ad.property.Discount,
         payment_method: Ad.property.payment_method,
@@ -101,7 +103,7 @@ const EditNewCemeteries = () => {
         floor_number: Ad.property.floor_number,
         floors: Ad.property.floors,
         price_per: Ad.property.price_per,
-        "images[]": Ad.property.images?.map((img) => img.image),
+        "images": Ad.property.images?.map((img) => img.image),
         video_link: Ad.property.video_link,
         full_address: Ad.property.full_address,
         governorate: Ad.property.governorate || "",
@@ -113,11 +115,11 @@ const EditNewCemeteries = () => {
         deliver_date: Ad.property.deliver_date,
         finishing_type: Ad.property.finishing_type,
         furnished: Ad.property.Furnished,
-        "facilities[]": Ad.property.facilities,
-        "features[]": Ad.property.features,
-        "services[]": Ad.property.services,
-        "devices[]": Ad.property.devices,
-        sub_category: Ad.property["Sub Category"],
+        "facilities": Ad.property.facilities,
+        "features": Ad.property.features,
+        "services": Ad.property.services,
+        "devices": Ad.property.devices,
+        sub_category: Ad.property.sub_category,
         advertiser_type: Ad.advertiser_type,
         phone: Ad.phone,
         email: Ad.email,
@@ -140,11 +142,11 @@ const EditNewCemeteries = () => {
   const navigate = useNavigate();
 
   const myIcon = new L.Icon({
-    iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    iconUrl: markerIcon,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+    shadowUrl: markerShadow,
     shadowSize: [41, 41],
   });
 
@@ -173,7 +175,7 @@ const EditNewCemeteries = () => {
     const fetchGov = async () => {
       try {
         setGovLoad(true);
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -196,7 +198,7 @@ const EditNewCemeteries = () => {
       })["id"];
       try {
         setCityLoad(true);
-        const response = await api.get(`/governorates/${govId}/cities`, {
+        const response = await api.get(`/cities/${govId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -220,7 +222,7 @@ const EditNewCemeteries = () => {
       })["id"];
       try {
         setRegionLoad(true);
-        const response = await api.get(`/governorates/city/${cityId}/regions`, {
+        const response = await api.get(`regions/${cityId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -241,12 +243,12 @@ const EditNewCemeteries = () => {
   // Street
   useEffect(() => {
     const fetchStreet = async () => {
-      let streetId = regions.find((e) => {
+      let regionId = regions.find((e) => {
         return e.name === formData.region;
       })["id"];
       try {
         setStreetLoad(true);
-        const response = await api.get(`/streetsByRegion/${streetId}`, {
+        const response = await api.get(`/streets/${regionId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -289,7 +291,7 @@ const EditNewCemeteries = () => {
     if (type === "file") {
       if (name === "primary_picture") {
         setPrimary_picture(files[0]);
-      } else if (name === "images[]") {
+      } else if (name === "images") {
         setImages(Array.from(files));
       }
       setFormData({
@@ -338,7 +340,7 @@ const EditNewCemeteries = () => {
   };
 
   const fieldMapping = {
-    ميزات: "features[]",
+    ميزات: "features",
   };
   const toggleAmenity = (category, amenity) => {
     const fieldName = fieldMapping[category];
@@ -394,14 +396,14 @@ const EditNewCemeteries = () => {
 
         // Append other form fields
         for (const [key, value] of Object.entries(formData)) {
-          if (key !== "images[]" && key !== "primary_picture" && value) {
+          if (key !== "images" && key !== "primary_picture" && value) {
             allFormData.append(key, value);
           }
         }
         // Append images
         if (images) {
           for (let i = 0; i < images.length; i++) {
-            allFormData.append("images[]", formData["images[]"][i]);
+            allFormData.append("images", formData["images"][i]);
           }
         }
         if (primary_picture) {
@@ -720,13 +722,13 @@ const EditNewCemeteries = () => {
                           يجب اختيار صوره للاعلان
                         </Form.Control.Feedback>
                       </Form.Group>
-                      <Form.Group controlId="images[]" className="mb-3">
+                      <Form.Group controlId="images" className="mb-3">
                         <Form.Label className="required">
                           قم بتحميل صور الاعلان
                         </Form.Label>
                         <Form.Control
                           type="file"
-                          name="images[]"
+                          name="images"
                           onChange={handleChange}
                           multiple
                         />
@@ -764,7 +766,7 @@ const EditNewCemeteries = () => {
                                 >
                                   <img
                                     key={index}
-                                    src={image.image}
+                                    src={image}
                                     alt={`AdditionalImage ${index}`}
                                     style={{
                                       maxWidth: "150px",
@@ -779,7 +781,7 @@ const EditNewCemeteries = () => {
                                     setDel={setDeleteImages}
                                     OldImages={oldImages}
                                     DeleteImages={deleteImages}
-                                    img={image.image}
+                                    img={image}
                                   />
                                 </div>
                               ))}

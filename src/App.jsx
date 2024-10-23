@@ -36,11 +36,11 @@ import ArticlesCategory from "./Pages/Dashboard/Articles/ArticlesCategory";
 import Molls from "./Pages/Dashboard/Places/Molls";
 import AllAds from "./Pages/Dashboard/AllAds";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
-import AuthGoogle from "./Pages/AuthGoogle/AuthGoogle";
+// import AuthGoogle from "./Pages/AuthGoogle/AuthGoogle";
 import AddQuickPage from "./Pages/AddQuickPage/AddQuickPage";
-import LoginWithRole from "./Components/LoginWithRole/LoginWithRole";
-import AddUsers from "./Pages/Dashboard/Users/AddUsers";
-import ShowAllUsers from "./Pages/Dashboard/Users/ShowAllUsers";
+// import LoginWithRole from "./Components/LoginWithRole/LoginWithRole";
+// import AddUsers from "./Pages/Dashboard/Users/AddUsers";
+// import ShowAllUsers from "./Pages/Dashboard/Users/ShowAllUsers";
 import EditArticle from "./Pages/Dashboard/Articles/EditArticle";
 import AllDrafts from "./Pages/Dashboard/Articles/AllDrafts";
 import ArticlesWithTag from "./Pages/Articles/ArticlesWithTag";
@@ -54,22 +54,22 @@ import EditLandPage from "./Pages/EditAdsPages/EditLandPage/EditLandPage";
 import EditBuildingsPage from "./Pages/EditAdsPages/EditBuildingsPage/EditBuildingsPage";
 import EditNewCemeteries from "./Pages/EditAdsPages/EditNewCemeteries/EditNewCemeteries";
 import GovPage from "./Pages/LocationsPage/GovPage/GovPage";
-import AddGovFilter from "./Pages/Dashboard/Filters/Government/AddGovFilter";
-import AddProjectFilter from "./Pages/Dashboard/Filters/Project/AddProjectFilter";
-import AllFilters from "./Pages/Dashboard/Filters/AllFilters";
-import AllGovFilters from "./Pages/Dashboard/Filters/Government/AllGovFilters";
-import AllProjectFilters from "./Pages/Dashboard/Filters/Project/AllProjectFilters";
-import EditFilter from "./Components/Filters/EiteFilter";
+// import AddGovFilter from "./Pages/Dashboard/Filters/Government/AddGovFilter";
+// import AddProjectFilter from "./Pages/Dashboard/Filters/Project/AddProjectFilter";
+// import AllFilters from "./Pages/Dashboard/Filters/AllFilters";
+// import AllGovFilters from "./Pages/Dashboard/Filters/Government/AllGovFilters";
+// import AllProjectFilters from "./Pages/Dashboard/Filters/Project/AllProjectFilters";
+// import EditFilter from "./Components/Filters/EiteFilter";
 import CityPage from "./Pages/LocationsPage/CityPage/CityPage";
 import CompoundPage from "./Pages/LocationsPage/CompoundPage/CompoundPage";
-import FilterPage from "./Pages/FilterPage/FilterPage";
-import AllCityFilters from "./Pages/Dashboard/Filters/City/AllCityFilters";
-import AddCityFilter from "./Pages/Dashboard/Filters/City/AddCityFilter";
-import AllRegionFilters from "./Pages/Dashboard/Filters/Region/AllRegionFilters";
-import AddRegionFilter from "./Pages/Dashboard/Filters/Region/AddRegionFilter";
+// import FilterPage from "./Pages/FilterPage/FilterPage";
+// import AllCityFilters from "./Pages/Dashboard/Filters/City/AllCityFilters";
+// import AddCityFilter from "./Pages/Dashboard/Filters/City/AddCityFilter";
+// import AllRegionFilters from "./Pages/Dashboard/Filters/Region/AllRegionFilters";
+// import AddRegionFilter from "./Pages/Dashboard/Filters/Region/AddRegionFilter";
 import SendEmail from "./Pages/ForgetPasswordPage/SendEmail";
 import ResetPassword from "./Pages/ForgetPasswordPage/ResetPassword";
-import DeleteImages from "./Components/DeleteItem/DeleteImages";
+// import DeleteImages from "./Components/DeleteItem/DeleteImages";
 import EditGovernments from "./Pages/Dashboard/EditPlaces/EditGovernments";
 import EditCities from "./Pages/Dashboard/EditPlaces/EditCities";
 import EditCompounds from "./Pages/Dashboard/EditPlaces/EditCompounds";
@@ -164,15 +164,6 @@ function App() {
           <Route path="add-Blog" element={<AddArticle />} />
           <Route path="edit-Blog" element={<EditArticle />} />
 
-          {/* <Route
-            path="delete-unused-images"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <DeleteImages />
-              </ProtectedRoute>
-            }
-          /> */}
-
           <Route
             path="governments"
             element={
@@ -241,134 +232,15 @@ function App() {
             }
           />
 
-          {/* <Route
+          <Route
             path="molls"
             element={
               <ProtectedRoute allowedRoles={["admin", "seo"]}>
                 <Molls />
               </ProtectedRoute>
             }
-          /> */}
-
-          {/* <Route
-            path="add-users"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AddUsers />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <ShowAllUsers role="admin" />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="writer"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <ShowAllUsers role="writer" />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="seo"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <ShowAllUsers role="seo" />
-              </ProtectedRoute>
-            }
-          /> */}
-
-          {/* <Route
-            path="filters"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AllFilters />
-              </ProtectedRoute>
-            }
           />
 
-          <Route
-            path="filters/governorates"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AllGovFilters />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="filters/add-gov-filter"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AddGovFilter />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="filters/cities"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AllCityFilters />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="filters/add-city-filter"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AddCityFilter />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="filters/regions"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AllRegionFilters />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="filters/add-region-filter"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AddRegionFilter />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="filters/projects"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AllProjectFilters />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="filters/add-project-filter"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <AddProjectFilter />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="filters/edit-filter"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "seo"]}>
-                <EditFilter />
-              </ProtectedRoute>
-            }
-          /> */}
-          
           {/* coments */}
           <Route
             path="ads-comments"
@@ -389,14 +261,14 @@ function App() {
         </Route>
 
         {/* User Routes */}
-        <Route
+        {/* <Route
           path="/favorite-properties"
           element={
             <ProtectedRoute allowedRoles={["user"]}>
               <FavPage />
             </ProtectedRoute>
           }
-        />
+        /> */}
         {/* Add ads route */}
         <Route
           path="/add-quick-property"

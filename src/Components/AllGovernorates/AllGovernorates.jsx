@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Button } from "react-bootstrap";
 import api from "../../API/ApiLink";
 import { Link } from "react-router-dom";
@@ -8,7 +8,7 @@ export default function AllGovernorates() {
   useEffect(() => {
     const fetchAllGov = async () => {
       try {
-        const response = await api.get("/getAllGovernoratesForHomepage");
+        const response = await api.get("/governorates");
         setAllGov(response.data.data);
       } catch (err) {
         console.log(err);

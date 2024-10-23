@@ -29,6 +29,9 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-clamp: 3; /* Number of lines before truncating */
-    max-height: 4.5em; /* Adjust the max height based on the number of lines */
+    line-clamp: 3; 
+    max-height: 4.5em; 
+}
+.articleImage{
+  height: 380px;
 }

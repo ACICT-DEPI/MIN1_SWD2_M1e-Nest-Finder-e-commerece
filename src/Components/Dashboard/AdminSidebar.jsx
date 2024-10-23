@@ -1,5 +1,5 @@
 import "./Sidebar.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Dropdown, DropdownButton, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -14,7 +14,7 @@ export default function SideBar() {
 useEffect(() => {
   const fetchToken = async () => {
     try {
-      const response = await api.get("/getAuthStatus", {
+      const response = await api.get("/users/getAuthStatus", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -37,24 +37,12 @@ useEffect(() => {
 }, [token]);
 
   const role = Cookies.get("role")
-  // const role = localStorage.getItem("role")
   const navigate = useNavigate()
   const Logout = async () => {
-    try {
-      const response = await api.post("/admin/logout", {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      })
-    } catch (error) {
-      console.log(error);
-    } finally {
-      // localStorage.removeItem("role");
       Object.keys(Cookies.get()).forEach(function (cookieName) {
         Cookies.remove(cookieName);
       });
       navigate("/")
-    }
   }
   return (
     <>
@@ -66,24 +54,6 @@ useEffect(() => {
                 الصفحة الرئيسية
               </Button>
             </Link>
-
-            {role === "admin" && (
-              <DropdownButton
-                id="dropdown-basic-button"
-                align="end"
-                title="المستخدمين"
-                className="w-100 sideDropdown"
-              >
-                <Dropdown.Item href="/dashboard/add-users">
-                  اضافه مستخدمين
-                </Dropdown.Item>
-                <Dropdown.Item href="/dashboard/admin">المديرين</Dropdown.Item>
-                <Dropdown.Item href="/dashboard/writer">
-                  كاتب المقال
-                </Dropdown.Item>
-                <Dropdown.Item href="/dashboard/seo">فريق ال SEO</Dropdown.Item>
-              </DropdownButton>
-            )}
 
             {(role === "admin" || role === "seo") && (
               <Link to="/dashboard/general-pages" className="w-100 button-link">
@@ -125,14 +95,9 @@ useEffect(() => {
               <Dropdown.Item href="/dashboard/add-Blog">
                 اضافه مدونة
               </Dropdown.Item>
-
-              {role === "admin" && (
-                <Dropdown.Item href="/dashboard/delete-unused-images">
-                  حذف الصور الغير مستخدمه
-                </Dropdown.Item>
-              )}
             </DropdownButton>
 
+            {/* المناطق */}
             {(role === "admin" || role === "seo") && (
               <DropdownButton
                 id="dropdown-basic-button"
@@ -150,48 +115,6 @@ useEffect(() => {
                   الكومباوندات
                 </Dropdown.Item>
                 <Dropdown.Item href="/dashboard/molls">المولات</Dropdown.Item>
-              </DropdownButton>
-            )}
-
-            {/* الفلاتر */}
-            {(role === "admin" || role === "seo") && (
-              <DropdownButton
-                id="dropdown-basic-button"
-                align="end"
-                title="الفلاتر"
-                className="w-100 sideDropdown"
-              >
-                <Dropdown.Item href="/dashboard/filters">
-                  جميع الفلاتر
-                </Dropdown.Item>
-                {/* محافظات */}
-                <Dropdown.Item href="/dashboard/filters/governorates">
-                  فلاتر المحافظات
-                </Dropdown.Item>
-                <Dropdown.Item href="/dashboard/filters/add-gov-filter">
-                  اضافه فلتر محافظة
-                </Dropdown.Item>
-                {/* مدن */}
-                <Dropdown.Item href="/dashboard/filters/cities">
-                  فلاتر المدن
-                </Dropdown.Item>
-                <Dropdown.Item href="/dashboard/filters/add-city-filter">
-                  اضافه فلتر مدينة
-                </Dropdown.Item>
-                {/* مناطق */}
-                <Dropdown.Item href="/dashboard/filters/regions">
-                  فلاتر المناطق
-                </Dropdown.Item>
-                <Dropdown.Item href="/dashboard/filters/add-region-filter">
-                  اضافه فلتر منطقة
-                </Dropdown.Item>
-
-                <Dropdown.Item href="/dashboard/filters/projects">
-                  فلاتر مشروعات
-                </Dropdown.Item>
-                <Dropdown.Item href="/dashboard/filters/add-project-filter">
-                  اضافه فلتر مشروع
-                </Dropdown.Item>
               </DropdownButton>
             )}
 

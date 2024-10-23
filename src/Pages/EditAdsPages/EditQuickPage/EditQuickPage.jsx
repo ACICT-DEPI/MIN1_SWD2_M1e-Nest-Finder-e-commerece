@@ -15,12 +15,11 @@ import AlertArError from "../../../Components/Alert/AlertArError.jsx";
 const EditQuickPage = () => {
   const location = useLocation(); //
   const Ad = location.state?.data; //
-  console.log(Ad);
 
   const [formData, setFormData] = useState({
     user_id: Cookies.get("user_id"), //👍
     details_ar: "", //👍
-    "images[]": "", //👍
+    "images": "", //👍
     governorate: "", //👍
     city: "", //👍
     type: "", //👍
@@ -40,7 +39,7 @@ const EditQuickPage = () => {
         details_ar: Ad.property.details_ar, //👍
         governorate: Ad.property.governorate, //👍
         city: Ad.property.city, //👍
-        type: Ad.property.Type, //👍
+        type: Ad.property.type, //👍
         phone: Ad.phone,
       });
       setOldImages(Ad.property.images)
@@ -69,7 +68,7 @@ const EditQuickPage = () => {
     const fetchGov = async () => {
       try {
         setGovLoad(true)
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -92,7 +91,7 @@ const EditQuickPage = () => {
         })["id"];
         try {
           setCityLoad(true)
-          const response = await api.get(`/governorates/${govId}/cities`, {
+          const response = await api.get(`/cities/${govId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -116,7 +115,7 @@ const EditQuickPage = () => {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    if (type === "file" && name === "images[]") {
+    if (type === "file" && name === "images") {
       setImages(Array.from(files));
       setFormData({
         ...formData,
@@ -164,7 +163,7 @@ const EditQuickPage = () => {
         // Append images
         if (images) {
           for (let i = 0; i < images.length; i++) {
-            allFormData.append("images[]", formData["images[]"][i]);
+            allFormData.append("images", formData["images"][i]);
           }
         }
 
@@ -313,13 +312,13 @@ const EditQuickPage = () => {
                       </Form.Group>
                     </Col>
                   </Row>
-                  <Form.Group controlId="images[]" className="mb-3">
+                  <Form.Group controlId="images" className="mb-3">
                     <Form.Label className="required">
                       قم بتحميل صور الاعلان
                     </Form.Label>
                     <Form.Control
                       type="file"
-                      name="images[]"
+                      name="images"
                       onChange={handleChange}
                       multiple
                     />
@@ -353,10 +352,11 @@ const EditQuickPage = () => {
                               style={{
                                 position: "relative",
                               }}
+                              key={index}
                             >
                               <img
                                 key={index}
-                                src={image.image}
+                                src={image}
                                 alt={`AdditionalImage ${index}`}
                                 style={{
                                   maxWidth: "150px",
@@ -371,7 +371,7 @@ const EditQuickPage = () => {
                                 setDel={setDeleteImages}
                                 OldImages={oldImages}
                                 DeleteImages={deleteImages}
-                                img={image.image}
+                                img={image}
                               />
                             </div>
                           ))}

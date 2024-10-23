@@ -10,7 +10,8 @@ export default function Search({ setAddress }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/getAllCitiesAndGovernorates");
+        const response = await api.get("/ads/all-locations");
+        console.log(response.data.data);
         setSearchOptions(response.data.data);
       } catch (error) {
         console.log(error);

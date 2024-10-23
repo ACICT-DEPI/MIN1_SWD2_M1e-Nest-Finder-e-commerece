@@ -4,7 +4,7 @@ import api from "../../API/ApiLink";
 import Cookies from "js-cookie";
 import LoadingBtn from "../LoadingBtn";
 import AlertMessage from "../Alert/Alert";
-export default function AddComment({ id }) {
+export default function AddComment({ article_id }) {
   const [comment, setComment] = useState("");
   const token = Cookies.get("token");
   const [load, setLoad] = useState(false);
@@ -15,8 +15,8 @@ export default function AddComment({ id }) {
     setLoad(true);
     try {
       await api.post(
-        `add-post-comment`,
-        { post_id: id, comment },
+        `/comments/article`,
+        { article_id , comment },
         {
           headers: {
             Authorization: `Bearer ${token}`,

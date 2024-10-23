@@ -18,7 +18,7 @@ export default function AddTag({TagsInBasket,setTagsInBasket}) {
      useEffect(() => {
       const fetchCategory = async () => {
         try {
-          const response = await api.get("/getAllTags");
+          const response = await api.get("/articles/tags");
           setAllTags(response.data.data);
         } catch (error) {
           console.log(error);

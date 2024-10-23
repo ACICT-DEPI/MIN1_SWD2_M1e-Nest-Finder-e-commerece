@@ -21,7 +21,7 @@ export default function GovsHome() {
     const fetchAllGov = async () => {
       try {
         setOverlay(true)
-        const response = await api.get("/getAllGovernoratesForHomepage");
+        const response = await api.get("/governorates");
         setAllGov(response.data.data);
       } catch (err) {
         console.log(err);

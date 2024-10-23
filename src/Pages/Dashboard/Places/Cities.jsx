@@ -15,7 +15,7 @@ export default function Cities() {
   // const role = localStorage.getItem("role")
   const token = Cookies.get("token");
   const [formData, setFormData] = useState({
-    governorate: 1,
+    governorate: '6707e4fa1e23ece23b571fcf',
     name: "",
     english_name: "",
     meta_title: "",
@@ -71,7 +71,7 @@ export default function Cities() {
   useEffect(() => {
     const fetchGov = async () => {
       try {
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -79,8 +79,7 @@ export default function Cities() {
         setGovernorates(response.data.data);
       } catch (error) {
         console.log(error);
-      } finally {
-      }
+      } 
     };
     fetchGov();
   }, []);
@@ -90,7 +89,7 @@ export default function Cities() {
     try {
       setOverlay(true);
       const response = await api.get(
-        `/governorates/${formData.governorate}/cities`,
+        `/cities/${formData.governorate}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -112,7 +111,7 @@ export default function Cities() {
   const handleDelete = async (id) => {
     try {
       setLoadId(true);
-      await api.post(`/deleteCity/${id}`, null, {
+      await api.delete(`/cities/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -131,18 +130,24 @@ export default function Cities() {
     if (formData.name) {
       setLoad(true);
       const allFormData = new FormData();
-      // Append other form fields
-      for (const [key, value] of Object.entries(formData)) {
+       // Append other form fields
+       for (const [key, value] of Object.entries(formData)) {
         if (key !== "image") {
-          allFormData.append(key, value);
+          if (key === "url") {
+            allFormData.append(key, value.replace(/ /g, "-"));
+          }
+          else {
+            allFormData.append(key, value);
+          }
         }
       }
+      
       allFormData.append("governorate_id", formData.governorate);
       if (image) {
         allFormData.append("image", formData.image[0]);
       }
       try {
-        const response = await api.post("/addCity", allFormData, {
+        await api.post("/cities", allFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
@@ -286,7 +291,7 @@ export default function Cities() {
           onChange={handelLocationChange}
           required
         >
-          {governorates.map((gov, index) => (
+          {governorates.map((gov) => (
             <option key={gov.id} value={gov.id}>
               {gov.name}
             </option>
@@ -301,7 +306,6 @@ export default function Cities() {
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>اسم المدينة</th>
                   <th>الاسم بالانجليزى</th>
                   <th>عنوان الصفحه</th>
@@ -315,8 +319,7 @@ export default function Cities() {
               </thead>
               <tbody>
                 {cities.map((item, index) => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
+                  <tr key={item._id}>
                     <td>{item.name}</td>
                     <td>{item.english_name}</td>
                     <td>{item.h1_title}</td>
@@ -357,7 +360,7 @@ export default function Cities() {
                       <DeleteItem
                         id={selectedItemId}
                         setId={setSelectedItemId}
-                        itemId={item.id}
+                        itemId={item._id}
                         DeleteFun={handleDelete}
                         load={loadId}
                       />

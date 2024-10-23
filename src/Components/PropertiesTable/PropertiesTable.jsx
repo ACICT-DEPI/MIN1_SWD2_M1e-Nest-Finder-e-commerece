@@ -19,9 +19,8 @@ const PropertiesTable = ({ data }) => {
     setSelectedItemId(id);
     setLoadId(true);
     try {
-      await api.post(
-        `/deleteAd/${id}`,
-        {},
+      await api.delete(
+        `/ads/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -93,7 +92,6 @@ const PropertiesTable = ({ data }) => {
     <Table striped bordered hover responsive="lg">
       <thead>
         <tr>
-          <th className={styles.header}>#</th>
           <th className={styles.header}>اسم العقار</th>
           <th className={styles.header}>الفئة</th>
           <th className={styles.header}>نوع العقار</th>
@@ -107,10 +105,9 @@ const PropertiesTable = ({ data }) => {
       <tbody>
         {data.map((item, index) => (
           <tr key={item.id} className="text-center">
-            <td className="text-end">{item.id}</td>
-            <td>{item.property["Arabic Name"]}</td>
-            <td>{item.property.Category}</td>
-            <td>{item.property["Sub Category"]}</td>
+            <td>{item.property.name_ad_ar}</td>
+            <td>{item.property.category}</td>
+            <td>{item.property.sub_category}</td>
             <td>
               <Link to={`/property/${item.slug}`}>الذهاب للاعلان</Link>
             </td>
@@ -124,7 +121,7 @@ const PropertiesTable = ({ data }) => {
               <Button
                 variant="warning"
                 onClick={() =>
-                  handleEdit(item.ad_type, item.property.Category, data[index])
+                  handleEdit(item.ad_type, item.property.category, data[index])
                 }
               >
                 تعديل

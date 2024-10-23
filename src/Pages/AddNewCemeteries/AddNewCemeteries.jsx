@@ -31,6 +31,9 @@ import LoadingBtn from "../../Components/LoadingBtn.jsx";
 import AlertMessage from "../../Components/Alert/Alert.jsx";
 import { useNavigate } from "react-router-dom";
 import AlertArError from "../../Components/Alert/AlertArError.jsx";
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
+
 const AddNewCemeteries = () => {
   const token = Cookies.get("token");
   const [load1, setLoad1] = useState(false);
@@ -43,11 +46,11 @@ const AddNewCemeteries = () => {
   const [alertArError, setAlertArError] = useState([]);
 
   const myIcon = new L.Icon({
-    iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    iconUrl: markerIcon,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+    shadowUrl: markerShadow,
     shadowSize: [41, 41],
   });
 
@@ -74,7 +77,7 @@ const AddNewCemeteries = () => {
     floor_number: "", //👍
     compound_name: "", //👍
     primary_picture: "", //👍
-    "images[]": "", //👍
+    "images": "", //👍
     video_link: "", //👍
     full_address: "", //👍
     governorate: "", //👍
@@ -84,7 +87,7 @@ const AddNewCemeteries = () => {
     deliver_date: "", //👍
     finishing_type: "", //👍
     furnished: "", //👍
-    "features[]": [], //👍
+    "features": [], //👍
     type: "sale", //👍
     sub_category: "مقابر",
   });
@@ -110,7 +113,7 @@ const AddNewCemeteries = () => {
   useEffect(() => {
     const fetchGov = async () => {
       try {
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -141,7 +144,7 @@ const AddNewCemeteries = () => {
       })["id"];
 
       try {
-        const response = await api.get(`/governorates/${govId}/cities`, {
+        const response = await api.get(`/cities/${govId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -161,7 +164,7 @@ const AddNewCemeteries = () => {
         return e.name === formData.city;
       })["id"];
       try {
-        const response = await api.get(`/governorates/city/${cityId}/regions`, {
+        const response = await api.get(`regions/${cityId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -176,11 +179,11 @@ const AddNewCemeteries = () => {
   // Street
   useEffect(() => {
     const fetchStreet = async () => {
-      const streetId = regions.find((e) => {
+      const regionId = regions.find((e) => {
         return e.name === formData.region;
       })["id"];
       try {
-        const response = await api.get(`/streetsByRegion/${streetId}`, {
+        const response = await api.get(`/streets/${regionId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -212,7 +215,7 @@ const AddNewCemeteries = () => {
     if (type === "file") {
       if (name === "primary_picture") {
         setPrimary_picture(files[0]);
-      } else if (name === "images[]") {
+      } else if (name === "images") {
         setImages(Array.from(files));
       }
       setFormData({
@@ -227,7 +230,7 @@ const AddNewCemeteries = () => {
     }
   };
   const fieldMapping = {
-    ميزات: "features[]",
+    ميزات: "features",
   };
   const toggleAmenity = (category, amenity) => {
     const fieldName = fieldMapping[category];
@@ -303,7 +306,7 @@ const AddNewCemeteries = () => {
 
         // Append other form fields
         for (const [key, value] of Object.entries(formData)) {
-          if (key !== "images[]" && key !== "primary_picture") {
+          if (key !== "images" && key !== "primary_picture") {
             allFormData.append(key, value);
           }
         }
@@ -311,7 +314,7 @@ const AddNewCemeteries = () => {
         // Append images
         if (images) {
           for (let i = 0; i < images.length; i++) {
-            allFormData.append("images[]", formData["images[]"][i]);
+            allFormData.append("images", formData["images"][i]);
           }
         }
 
@@ -324,13 +327,13 @@ const AddNewCemeteries = () => {
         allFormData.append("longitude", position[1]);
 
         // Post the data
-        const response = await api.post("/AddProperties", allFormData, {
+        const response = await api.post("/properties", allFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         });
-        const prop_id = response.data.data.property_id;
+        const prop_id = response.data.data._id;
         setFormData2({ ...formData2, property_id: prop_id });
         setLoad1(false);
         // للانتقال لاخر صفحه و حفظ الاعلان
@@ -367,10 +370,9 @@ const AddNewCemeteries = () => {
       setShow(true);
     } else {
       setLoad2(true);
-      const token = Cookies.get("token");
       try {
         const response = await api.post(
-          "/makeAd",
+          "/ads",
           {
             ...formData2,
           },
@@ -382,16 +384,16 @@ const AddNewCemeteries = () => {
           }
         );
         // ملئ بيانات التواصل مباشرة
-        const user_type = Cookies.get("user_type") || null;
-        const phone = Cookies.get("phone") || null;
-        const whats_phone = Cookies.get("whats_phone") || null;
-        if (phone === null) {
+        const user_type = Cookies.get("user_type") || "";
+        const phone = Cookies.get("phone") || "";
+        const whats_phone = Cookies.get("whats_phone") || "";
+        if (phone === "") {
           Cookies.set("phone", formData2.phone);
         }
-        if (user_type === null) {
+        if (user_type === "") {
           Cookies.set("user_type", formData2.advertiser_type);
         }
-        if (whats_phone === null) {
+        if (whats_phone === "") {
           Cookies.set("whats_phone", formData2.whats_phone);
         }
         setAlert({ msg: "تم حفظ الإعلان بنجاح", variant: 1 });
@@ -664,11 +666,11 @@ const AddNewCemeteries = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
 
-                        <Form.Group controlId="images[]" className="mb-3">
+                        <Form.Group controlId="images" className="mb-3">
                           <Form.Label>قم بتحميل باقي الصور</Form.Label>
                           <Form.Control
                             type="file"
-                            name="images[]"
+                            name="images"
                             onChange={handleChange}
                             multiple
                           />

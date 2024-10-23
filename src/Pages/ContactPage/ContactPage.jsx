@@ -14,12 +14,8 @@ import Header from "../../Components/Header/Header";
 import imageEgypt from "../../images/مصر.svg";
 import usePageSEO from "../../hooks/usePageSEO";
 import FooterContactUs from "../../Components/Footer/FooterContactUs";
-
-
-
-
-// import emailjs from 'emailjs-com';
-
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
 
 export default function ContactPage() {
   // Set SEO settings
@@ -29,53 +25,13 @@ export default function ContactPage() {
   });
 
   const myIcon = new L.Icon({
-    iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    iconUrl: markerIcon,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+    shadowUrl: markerShadow,
     shadowSize: [41, 41],
   });
-
-
-  // const formik = useFormik({
-  //   initialValues: {
-  //     name: '',
-  //     email: '',
-  //     phone: '',
-  //     subject: '',
-  //     message: '',
-  //   },
-  //   onSubmit: (values) => {
-  //     emailjs.send('service_op6qfdo', 'template_9hylbbc', {
-  //       name: values.name,
-  //       email: values.email,
-  //       phone: values.phone,
-  //       subject: values.subject,
-  //       message: values.message,
-  //     }, '-ZFmtBPRhlqlWYnYN')
-  //       .then((response) => {
-  //         console.log('SUCCESS!', response.status, response.text);
-  //       })
-  //       .catch((error) => {
-  //         console.error('FAILED...', error);
-  //       });
-  //   },
-  // });
-
-  // const formik = useFormik({
-  //   initialValues: {
-  //     name: "",
-  //     email: "",
-  //     phone: "",
-  //     subject: "",
-  //     message: "",
-  //   },
-  //   onSubmit: (values) => {
-  //     alert(JSON.stringify(values, null, 2));
-  //   },
-  // });
-
 
 
   const formik = useFormik({

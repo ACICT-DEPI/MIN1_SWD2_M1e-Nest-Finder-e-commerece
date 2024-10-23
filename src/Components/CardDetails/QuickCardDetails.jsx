@@ -5,7 +5,6 @@ import "slick-carousel/slick/slick-theme.css";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhone, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import ShowFilterToUser from "../Filters/ShowFilterToUser";
 import usePageSEO from "../../hooks/usePageSEO";
 
 const QuickCardDetails = ({ propertyDetails }) => {
@@ -35,7 +34,7 @@ const QuickCardDetails = ({ propertyDetails }) => {
                   {propertyDetails.property.images.map((image, index) => (
                     <div key={index}>
                       <img
-                        src={image.image}
+                        src={image}
                         alt={`Slide ${index}`}
                         className="img-fluid w-100"
                         style={{ width: "100%", height: "400px" }}
@@ -46,7 +45,7 @@ const QuickCardDetails = ({ propertyDetails }) => {
               ) : (
                 <div key={100}>
                   <img
-                    src={propertyDetails.property.images[0].image}
+                    src={propertyDetails.property.images[0]}
                     alt={`صور الاعلان `}
                     className="img-fluid w-100"
                     style={{ width: "100%", height: "400px" }}
@@ -105,7 +104,7 @@ const QuickCardDetails = ({ propertyDetails }) => {
                     }&text=${encodeURIComponent(
                       "مرحباً، أنا مهتم بعقارك الموجود على Nest Finder.: "
                     )}${encodeURIComponent(
-                      ` http://varnda.com/property/${encodeURIComponent(propertyDetails.slug)}`
+                      `https://depi-final-project.vercel.app//property/${encodeURIComponent(propertyDetails.slug)}`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -119,13 +118,7 @@ const QuickCardDetails = ({ propertyDetails }) => {
             </Col>
           </Row>
           <Row dir="rtl">
-            <ShowFilterToUser
-              type={propertyDetails.property.Type}
-              gov={propertyDetails.property.governorate}
-              city={propertyDetails.property.city}
-              region={propertyDetails.property.region}
-              compound={propertyDetails.property.compound}
-            />
+          
           </Row>
         </Container>
       </div>

@@ -62,7 +62,7 @@ export default function Molls() {
     const fetchGov = async () => {
       try {
         setOverlay(true);
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -83,7 +83,7 @@ export default function Molls() {
       try {
         setOverlay(true);
         const response = await api.get(
-          `/governorates/${getForm.governorate}/cities`,
+          `/cities/${getForm.governorate}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ export default function Molls() {
   const fetchMoll = async () => {
     try {
       setOverlay(true);
-      const response = await api.get(`/get_malls_by_city/${getForm.city}`, {
+      const response = await api.get(`/malls/${getForm.city}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -129,9 +129,9 @@ export default function Molls() {
     if (newMollName) {
       try {
         setLoadEdit(true);
-        const response = await api.post(
-          `/update-mall`,
-          { name: newMollName, city_id: getForm.city, mall_id: selectedItemId },
+        await api.patch(
+          `/malls/${selectedItemId}`,
+          { name: newMollName, city_id: getForm.city},
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -151,7 +151,7 @@ export default function Molls() {
   const handleDelete = async (id) => {
     try {
       setLoadId(true);
-      const response = await api.post(`/delete-mall/${id}`, null, {
+      await api.delete(`/malls/${id}`,{
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -169,8 +169,8 @@ export default function Molls() {
     setLoad(true);
     if (getForm.city) {
       try {
-        const response = await api.post(
-          "/add-mall",
+        await api.post(
+          "/malls",
           { name: mollName, city_id: getForm.city },
           {
             headers: {
@@ -282,14 +282,14 @@ export default function Molls() {
               </thead>
               <tbody>
                 {molls.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
+                  <tr key={item._id}>
+                    <td>{item._id}</td>
                     <td>{item.name}</td>
                     <td>
                       <Button
                         variant="warning"
                         onClick={() => {
-                          handleShow(item.id, item.name);
+                          handleShow(item._id, item.name);
                         }}
                       >
                         تعديل
@@ -323,7 +323,7 @@ export default function Molls() {
                     {role==='admin'&&<DeleteItem
                       id={selectedItemId}
                       setId={setSelectedItemId}
-                      itemId={item.id}
+                      itemId={item._id}
                       DeleteFun={handleDelete}
                       load={loadId}
                     />}

@@ -21,7 +21,7 @@ export default function ArticlesCategory() {
         const fetchCategory = async () => {
             try {
                 
-                const response = await api.get("/getallcategories");
+                const response = await api.get("/categories");
                 setCategories(response.data.data)
             } catch (error) {
                 console.log(error);
@@ -34,9 +34,9 @@ export default function ArticlesCategory() {
 const fetchArticles = async () => {
     try {
         setOverlay(true)
-        const response = await api.get(`getPostsByCategory/${categoryName}`);
+        const response = await api.get(`/articles/category/${categoryName}`);
         if(response.data.data){
-            setArticles(response.data.data.posts)
+            setArticles(response.data.data)
         }
         else{
             setArticles([])
@@ -62,7 +62,7 @@ const handleDelete = async (id) => {
     try {
       setSelectedItemId(id);
         setLoadId(id);
-        await api.delete(`deletePost/${id}`, {
+        await api.delete(`/articles/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -120,7 +120,6 @@ return (
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>عنوان المدونة</th>
                   <th>الميتا دسكريبشن</th>
                   <th>الكلمات المفتاحيه</th>
@@ -132,17 +131,16 @@ return (
               </thead>
               <tbody>
                 {articles.map((item, index) => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
-                    <td>{item.Title}</td>
+                  <tr key={item._id}>
+                    <td>{item.title}</td>
                     <td>
                       {item.meta_description &&
                         renderLimitedText(item.meta_description, 50)}
                     </td>
                     <td>{item.key_words}</td>
                     <td>
-                      <Link to={`/blog/${item.Article_url}`}>
-                        {item.Article_url}
+                      <Link to={`/blog/${item.article_url}`}>
+                        {item.article_url}
                       </Link>
                     </td>
                     <td>
@@ -158,10 +156,10 @@ return (
                     {/* <td>
                    <Button
                     variant="danger"
-                    disabled={loadId === item.id}
-                    onClick={() => handleDelete(item.id)}
+                    disabled={loadId === item._id}
+                    onClick={() => handleDelete(item._id)}
                   >
-                    {loadId === item.id ? <LoadingBtn /> : "حذف"}
+                    {loadId === item._id ? <LoadingBtn /> : "حذف"}
                   </Button>
                 </td> */}
 
@@ -169,7 +167,7 @@ return (
                       <DeleteItem
                         id={selectedItemId}
                         setId={setSelectedItemId}
-                        itemId={item.id}
+                        itemId={item._id}
                         DeleteFun={handleDelete}
                         load={loadId}
                       />

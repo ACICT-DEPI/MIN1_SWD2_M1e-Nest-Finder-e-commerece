@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Swapper.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -11,7 +11,7 @@ const [articles,setArticles]=useState([])
  useEffect(() => {
   const fetchArticles = async () => {
       try {
-          const response = await api.get("/getlatest");
+          const response = await api.get("/articles/latest10");
           setArticles(response.data.data)
       } catch (error) {
           console.log(error);

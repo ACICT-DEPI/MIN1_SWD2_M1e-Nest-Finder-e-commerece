@@ -18,8 +18,8 @@ export default function AllArticles() {
 const fetchArticles = async () => {
     try {
         setOverlay(true)
-        const response = await api.get("/getAllPosts");
-        setArticles(response.data.data.posts)
+        const response = await api.get("/articles/all_articles");
+        setArticles(response.data.data)
     } catch (error) {
         console.log(error);
     }finally{
@@ -35,7 +35,7 @@ const handleDelete = async (id) => {
   try {
       setSelectedItemId(id);
       setLoadId(id);
-      await api.delete(`deletePost/${id}`, {
+      await api.delete(`/articles/${id}`, {
           headers: {
               Authorization: `Bearer ${token}`,
           }
@@ -65,7 +65,6 @@ return (
     <Table striped bordered hover>
       <thead>
         <tr>
-          <th>#</th>
           <th>عنوان المدونة</th>
           <th>الميتا دسكريبشن</th>
           <th>الكلمات المفتاحيه</th>
@@ -80,16 +79,15 @@ return (
       ) : (
         <tbody>
           {articles.map((item, index) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.Title}</td>
+            <tr key={item._id}>
+              <td>{item.title}</td>
               <td>
                 {item.meta_description &&
                   renderLimitedText(item.meta_description, 50)}
               </td>
               <td>{item.key_words}</td>
               <td>
-                <Link to={`/blog/${item.Article_url}`}>{item.Article_url}</Link>
+                <Link to={`/blog/${item.article_url}`}>{item.article_url}</Link>
               </td>
               <td>
                 <Button
@@ -105,7 +103,7 @@ return (
                 <DeleteItem
                   id={selectedItemId}
                   setId={setSelectedItemId}
-                  itemId={item.id}
+                  itemId={item._id}
                   DeleteFun={handleDelete}
                   load={loadId}
                 />

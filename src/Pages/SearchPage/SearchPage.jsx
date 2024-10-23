@@ -9,7 +9,6 @@ import "slick-carousel/slick/slick-theme.css";
 import PropertyCard from "../../Components/Cards/Card";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddPropertyCard from "../../Components/Cards/AddProperty/AddPropertyCard";
-import ShowFilterToUser from "../../Components/Filters/ShowFilterToUser";
 import usePageSEO from "../../hooks/usePageSEO";
 
 const useQuery = () => {
@@ -50,15 +49,7 @@ usePageSEO({
           <Col md={8} dir="rtl">
             <PropertyCard properties={properties} loading={loading} />
           </Col>
-
-          <Col md={4} dir="rtl">
-            <ShowFilterToUser
-              type={sendfilter.type}
-              gov={sendfilter.gov}
-              city={sendfilter.city}
-              region={sendfilter.region}
-              compound={sendfilter.compound}
-            />
+          <Col md={4} dir="rtl">            
           </Col>
         </Row>
       </Container>

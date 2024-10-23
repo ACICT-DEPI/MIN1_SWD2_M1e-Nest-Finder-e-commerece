@@ -220,13 +220,13 @@ export default function HeaderSearchAdvanced({query,navigate,setProperties,setLo
               value != null && value !== "" && !(Array.isArray(value) && value.length === 0)
           )
         );
-        const response = await api.get(`/searchAds?sortBy=${sortBy}`, {
+        const response = await api.get(`/ads/search?sortBy=${sortBy}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
           params: filteredParams,
         });
-        setProperties(response.data.data)
+        setProperties(response.data.ads)
       } catch (err) {
         console.log(err);
       }finally{

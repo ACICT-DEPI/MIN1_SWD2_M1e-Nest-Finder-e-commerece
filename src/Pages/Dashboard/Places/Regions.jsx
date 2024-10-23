@@ -19,7 +19,6 @@ import DeleteItem from "../../../Components/DeleteItem/DeleteItem.jsx";
 export default function Regions() {
 
   const role = Cookies.get("role")
-  // const role = localStorage.getItem("role")
   const token = Cookies.get("token");
   const [getForm, setGetForm] = useState({
     governorate: "",
@@ -63,7 +62,7 @@ export default function Regions() {
     const fetchGov = async () => {
       try {
         setOverlay(true);
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -84,7 +83,7 @@ export default function Regions() {
       try {
         setOverlay(true);
         const response = await api.get(
-          `/governorates/${getForm.governorate}/cities`,
+          `/cities/${getForm.governorate}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -108,7 +107,7 @@ export default function Regions() {
     try {
       setOverlay(true);
       const response = await api.get(
-        `/governorates/city/${getForm.city}/regions`,
+        `/regions/${getForm.city}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -127,13 +126,14 @@ export default function Regions() {
       fetchRegion();
     }
   }, [getForm.governorate, getForm.city]);
+
   // تعديل المناطق
-  const handleEdite = async (selec) => {
+  const handleEdite = async () => {
     if (newRegionName) {
       try {
         setLoadEdit(true);
-        const response = await api.post(
-          `updateRegion/${selectedItemId}`,
+        await api.patch(
+          `/regions/${selectedItemId}`,
           { name: newRegionName, city_id: getForm.city },
           {
             headers: {
@@ -150,11 +150,12 @@ export default function Regions() {
       }
     }
   };
+
   // حذف منطقه
   const handleDelete = async (id) => {
     try {
       setLoadId(true);
-      const response = await api.post(`/deleteRegion/${id}`, null, {
+      await api.delete(`/regions/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -166,14 +167,15 @@ export default function Regions() {
       setLoadId(false);
     }
   };
+
   // اضافه منطقه
   const handleAddRegions = async (e) => {
     e.preventDefault();
     setLoad(true);
     if (getForm.city) {
       try {
-        const response = await api.post(
-          "/addRegion",
+        await api.post(
+          "/regions",
           { name: regionName, city_id: getForm.city },
           {
             headers: {
@@ -212,7 +214,7 @@ export default function Regions() {
           <option key={0} value="">
             اختر المحافظة
           </option>
-          {governorates.map((gov, index) => (
+          {governorates.map((gov) => (
             <option key={gov.id} value={gov.id}>
               {gov.name}
             </option>
@@ -277,7 +279,6 @@ export default function Regions() {
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>اسم المنطقة</th>
                   <th colSpan={2} className="text-center">
                     أجراءات
@@ -286,14 +287,13 @@ export default function Regions() {
               </thead>
               <tbody>
                 {regions.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
+                  <tr key={item._id}>
                     <td>{item.name}</td>
                     <td>
                       <Button
                         variant="warning"
                         onClick={() => {
-                          handleShow(item.id, item.name);
+                          handleShow(item._id, item.name);
                         }}
                       >
                         تعديل
@@ -324,10 +324,10 @@ export default function Regions() {
                         </Modal.Footer>
                       </Modal>
                     </td>
-                   {role==='admin'&& <DeleteItem
+                  {role==='admin'&& <DeleteItem
                       id={selectedItemId}
                       setId={setSelectedItemId}
-                      itemId={item.id}
+                      itemId={item._id}
                       DeleteFun={handleDelete}
                       load={loadId}
                     />}

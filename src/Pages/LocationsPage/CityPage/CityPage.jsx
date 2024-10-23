@@ -23,7 +23,7 @@ export default function CityPage() {
       try {
         setOverlay(true)
         setLoading(true)
-        const response = await api.get(`/getAdsByCity/${city}`);
+        const response = await api.get(`/ads/city/${city}`);
         setData(response.data.data)
       } catch (error) {
         console.log(error);
@@ -42,7 +42,7 @@ export default function CityPage() {
 
   // Set default SEO settings
   usePageSEO({
-    title: data.meta_title|| "مدينة",
+    title: data.meta_title|| data.name || "مدينة",
     description: data.meta_description || "",
     canonical: `https://depi-final-project.vercel.app/${gov}/${city}`
   });

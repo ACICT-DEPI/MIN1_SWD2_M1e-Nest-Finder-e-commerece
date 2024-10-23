@@ -17,8 +17,8 @@ export default function ArticleEditor({setArticle_body,article_body="",staticBod
   const handleImageUpload = (blobInfo, success, failure) => {
     setLoading(true);
     const formData = new FormData();
-    formData.append('image', blobInfo.blob(), blobInfo.filename());
-    api.post('/uploadTempImage', formData,{
+    formData.append('article_image', blobInfo.blob(), blobInfo.filename());
+    api.post('/articles/image', formData,{
       headers: {
           Authorization: `Bearer ${token}`,
       }
@@ -109,3 +109,5 @@ export default function ArticleEditor({setArticle_body,article_body="",staticBod
     </div>
   );
 }
+
+

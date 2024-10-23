@@ -92,7 +92,7 @@ export default function Compounds() {
     const fetchGov = async () => {
       try {
         setOverlay(true);
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -113,7 +113,7 @@ export default function Compounds() {
       try {
         setOverlay(true);
         const response = await api.get(
-          `/governorates/${formData.governorate}/cities`,
+          `/cities/${formData.governorate}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -137,7 +137,7 @@ export default function Compounds() {
     try {
       setOverlay(true);
       const response = await api.get(
-        `/get_compounds_by_city/${formData.city}`,
+        `/compounds/${formData.city}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -161,7 +161,7 @@ export default function Compounds() {
   const handleDelete = async (id) => {
     try {
       setLoadId(true);
-      const response = await api.post(`/delete-compound/${id}`, null, {
+      await api.delete(`/compounds/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -191,7 +191,7 @@ export default function Compounds() {
           allFormData.append("image", formData.image[0]);
         }
         try {
-          const response = await api.post("/add-compound", allFormData, {
+          await api.post("/compounds", allFormData, {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "multipart/form-data",
@@ -401,8 +401,8 @@ export default function Compounds() {
               </thead>
               <tbody>
                 {compounds.map((item, index) => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
+                  <tr key={item._id}>
+                    <td>{item._id}</td>
                     <td>{item.name}</td>
                     <td>{item.english_name}</td>
                     <td>{item.h1_title}</td>
@@ -441,7 +441,7 @@ export default function Compounds() {
                     {role==='admin'&&<DeleteItem
                       id={selectedItemId}
                       setId={setSelectedItemId}
-                      itemId={item.id}
+                      itemId={item._id}
                       DeleteFun={handleDelete}
                       load={loadId}
                     />}

@@ -9,7 +9,7 @@ export default function HeaderPageLink({activeCategory}) {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const response = await api.get(`/getallcategories`);
+            const response = await api.get(`/categories`);
             setCategories(response.data.data);
         } catch (error) {
             console.error('Error fetching data:', error);

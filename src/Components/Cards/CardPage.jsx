@@ -54,6 +54,7 @@ export default function CardPage({ properties=[] ,loading}) {
     const handleLove = async (ad_id, index) => {
         setLoadId(ad_id)
         try {
+          //OLD
             await api.post("/flip-favorite", { ad_id }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -150,19 +151,19 @@ export default function CardPage({ properties=[] ,loading}) {
                   >
                     <div className="imgCont" style={{ height: "auto" }}>
                       <Link to={`/property/${property.slug}`} className="link">
-                        {property.property.images.length > 0 ? (
+                        {property.property_id.images.length > 0 ? (
                           <Slider {...settings}>
                             <div key="primary-image">
                               <img
-                                src={property.property.primary_picture}
+                                src={property.property_id.primary_picture}
                                 alt="صوره الاعلان الرئيسيه"
                                 style={{ width: "100%", height: "200px" }}
                               />
                             </div>
-                            {property.property.images.map((image, idx) => (
+                            {property.property_id.images.map((image, idx) => (
                               <div key={`image-${idx}`}>
                                 <img
-                                  src={image.image}
+                                  src={image}
                                   alt={`imgCard-${idx}`}
                                   style={{ width: "100%", height: "200px" }}
                                 />
@@ -172,7 +173,7 @@ export default function CardPage({ properties=[] ,loading}) {
                         ) : (
                           <div>
                             <img
-                              src={property.property.primary_picture}
+                              src={property.property_id.primary_picture}
                               alt={`صوره الاعلان الرئيسيه`}
                               key={index}
                               style={{ width: "100%", height: "200px" }}
@@ -214,7 +215,7 @@ export default function CardPage({ properties=[] ,loading}) {
                           }&text=${encodeURIComponent(
                             "مرحباً، أنا مهتم بعقارك الموجود على Nest Finder.: "
                           )}${encodeURIComponent(
-                            `http://varnda.com/property/${encodeURIComponent(
+                            `https://depi-final-project.vercel.app//property/${encodeURIComponent(
                               property.slug
                             )}`
                           )}`}
@@ -256,7 +257,7 @@ export default function CardPage({ properties=[] ,loading}) {
                                 marginLeft: "5px",
                               }}
                             >
-                              {Number(property.property.price).toLocaleString(
+                              {Number(property.property_id.price).toLocaleString(
                                 "ar-EG"
                               )}
                             </span>
@@ -289,7 +290,7 @@ export default function CardPage({ properties=[] ,loading}) {
                                     color: "black",
                                   }}
                                 >
-                                  {property.property["Sub Category"]}
+                                  {property.property_id.sub_category}
                                 </span>
                               </Col>
                               <Col
@@ -310,9 +311,9 @@ export default function CardPage({ properties=[] ,loading}) {
                                     color: "black",
                                   }}
                                 >
-                                  {property.property.rooms == 10
+                                  {property.property_id.rooms == 10
                                     ? "+10"
-                                    : property.property.rooms}
+                                    : property.property_id.rooms}
                                 </span>
                               </Col>
                               <Col
@@ -333,9 +334,9 @@ export default function CardPage({ properties=[] ,loading}) {
                                     color: "black",
                                   }}
                                 >
-                                  {property.property.bathrooms == 6
+                                  {property.property_id.bathrooms == 6
                                     ? "+6"
-                                    : property.property.bathrooms}
+                                    : property.property_id.bathrooms}
                                 </span>
                               </Col>
                             </Row>
@@ -361,14 +362,14 @@ export default function CardPage({ properties=[] ,loading}) {
                                     fontWeight: "bold",
                                   }}
                                 >
-                                  {property.property.area}
+                                  {property.property_id.area}
                                 </span>
                                 متر مربع
                               </Col>
                             </Row>
                             <Row>
                               <Col style={{ color: "black" }}>
-                                <h2>{property.property["Arabic Name"]}</h2>
+                                <h2>{property.property_id.name_ad_ar}</h2>
                               </Col>
                             </Row>
                             <Row>
@@ -379,9 +380,9 @@ export default function CardPage({ properties=[] ,loading}) {
                                   fontWeight: "bold",
                                 }}
                               >
-                                {property.property.details_ar &&
+                                {property.property_id.details_ar &&
                                   renderLimitedText(
-                                    property.property.details_ar,
+                                    property.property_id.details_ar,
                                     150
                                   )}
                               </p>
@@ -397,7 +398,7 @@ export default function CardPage({ properties=[] ,loading}) {
                                     color: "black",
                                   }}
                                 >
-                                  {property.property.full_address}
+                                  {property.property_id.full_address}
                                 </span>
                               </Col>
                             </Row>
@@ -436,12 +437,12 @@ export default function CardPage({ properties=[] ,loading}) {
                   >
                     <div className="imgCont" style={{ height: "auto" }}>
                       <Link to={`/property/${property.slug}`} className="link">
-                        {property.property.images.length > 1 ? (
+                        {property.property_id.images.length > 1 ? (
                           <Slider {...settings}>
-                            {property.property.images.map((image, idx) => (
+                            {property.property_id.images.map((image, idx) => (
                               <div key={idx}>
                                 <img
-                                  src={image.image}
+                                  src={image}
                                   alt={`imgCard-${idx}`}
                                   key={idx}
                                   style={{ width: "100%", height: "200px" }}
@@ -452,7 +453,7 @@ export default function CardPage({ properties=[] ,loading}) {
                         ) : (
                           <div>
                             <img
-                              src={property.property.images[0].image}
+                              src={property.property_id.images[0]}
                               alt={`صوره الاعلان`}
                               key={index}
                               style={{ width: "100%", height: "200px" }}
@@ -494,7 +495,7 @@ export default function CardPage({ properties=[] ,loading}) {
                           }&text=${encodeURIComponent(
                             "مرحباً، أنا مهتم بعقارك الموجود على Nest Finder.: "
                           )}${encodeURIComponent(
-                            `http://varnda.com/property/${encodeURIComponent(
+                            `https://depi-final-project.vercel.app//property/${encodeURIComponent(
                               property.slug
                             )}`
                           )}`}
@@ -528,9 +529,9 @@ export default function CardPage({ properties=[] ,loading}) {
                                   fontWeight: "bold",
                                 }}
                               >
-                                {property.property.details_ar &&
+                                {property.property_id.details_ar &&
                                   renderLimitedText(
-                                    property.property.details_ar,
+                                    property.property_id.details_ar,
                                     500
                                   )}
                               </p>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from "../../../Components/Header/Header.jsx";
 import Footer from '../../../Components/Footer/Footer.jsx';
@@ -17,6 +17,8 @@ import { useLocation } from "react-router-dom"; //
 import DeleteImage from "../../../Components/DeleteImage/DeleteImage.jsx";//
 import {Autocomplete,TextField} from "@mui/material";
 import AlertArError from '../../../Components/Alert/AlertArError.jsx';
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
 
 const EditApartmentsAndDuplexesPage = () => {
   
@@ -44,7 +46,7 @@ const EditApartmentsAndDuplexesPage = () => {
   bathrooms: '',//👍
   floor_number: '',//👍
   primary_picture: '',//👍  
-  'images[]': '',//👍
+  'images': '',//👍
   video_link: '',//👍
   full_address: '',//👍
   governorate: '',//👍
@@ -56,10 +58,10 @@ const EditApartmentsAndDuplexesPage = () => {
   deliver_date: '',//👍
   finishing_type: '',//👍
   furnished: '',//👍
-  'facilities[]': [],//👍
-  'features[]': [],//👍
-  'services[]': [],//👍
-  'devices[]': [],//👍
+  'facilities': [],//👍
+  'features': [],//👍
+  'services': [],//👍
+  'devices': [],//👍
   sub_category:'',
   //ADS
   advertiser_type: "",
@@ -72,9 +74,9 @@ const EditApartmentsAndDuplexesPage = () => {
   const fetchAd = async () => {
     setFormData({
       id: Ad.id,
-      name_ad_ar: Ad.property["Arabic Name"],
+      name_ad_ar: Ad.property.name_ad_ar,
       details_ar: Ad.property.details_ar,
-      type: Ad.property.Type,
+      type: Ad.property.type,
       price: Ad.property.price,
       discount: Ad.property.Discount,
       payment_method: Ad.property.payment_method,
@@ -86,7 +88,7 @@ const EditApartmentsAndDuplexesPage = () => {
       floor_number: Ad.property.floor_number,
       floors:Ad.property.floors,
       price_per:Ad.property.price_per,
-      "images[]": Ad.property.images?.map((img) => img.image),
+      "images": Ad.property.images?.map((img) => img.image),
       video_link: Ad.property.video_link,
       full_address: Ad.property.full_address,
       governorate: Ad.property.governorate || "",
@@ -98,11 +100,11 @@ const EditApartmentsAndDuplexesPage = () => {
       deliver_date: Ad.property.deliver_date,
       finishing_type: Ad.property.finishing_type,
       furnished: Ad.property.Furnished,
-      "facilities[]": Ad.property.facilities,
-      "features[]": Ad.property.features,
-      "services[]": Ad.property.services,
-      "devices[]": Ad.property.devices,
-      sub_category: Ad.property["Sub Category"],
+      "facilities": Ad.property.facilities,
+      "features": Ad.property.features,
+      "services": Ad.property.services,
+      "devices": Ad.property.devices,
+      sub_category: Ad.property.sub_category,
       advertiser_type: Ad.advertiser_type,
       phone: Ad.phone,
       email: Ad.email,
@@ -123,11 +125,11 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
   const navigate = useNavigate();
 
   const myIcon = new L.Icon({
-    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    iconUrl: markerIcon,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+    shadowUrl: markerShadow,
     shadowSize: [41, 41],
   });
 
@@ -163,7 +165,7 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
     const fetchGov = async () => {
       try {
         setGovLoad(true)
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -186,7 +188,7 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
         })["id"];
         try {
           setCityLoad(true)
-          const response = await api.get(`/governorates/${govId}/cities`, {
+          const response = await api.get(`/cities/${govId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -210,7 +212,7 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
       })["id"]
       try {
         setRegionLoad(true)
-        const response = await api.get(`/governorates/city/${cityId}/regions`, {
+        const response = await api.get(`regions/${cityId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -231,12 +233,12 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
   // Street
   useEffect(() => {
     const fetchStreet = async () => {
-      let streetId = regions.find((e) => {
+      let regionId = regions.find((e) => {
         return e.name === formData.region
       })["id"]
       try {
         setStreetLoad(true)
-        const response = await api.get(`/streetsByRegion/${streetId}`, {
+        const response = await api.get(`/streets/${regionId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -262,7 +264,7 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
       })["id"]
         try {
           setCompoundLoad(true)
-            const response = await api.get(`/get_compounds_by_city/${cityId}`, {
+            const response = await api.get(`/compounds/${cityId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -304,7 +306,7 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
     if (type === 'file') {
       if (name === 'primary_picture') {
         setPrimary_picture(files[0]);
-      } else if (name === 'images[]') {
+      } else if (name === 'images') {
         setImages(Array.from(files));
       }
       setFormData({
@@ -356,10 +358,10 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
   };
 
   const fieldMapping = {
-    "مرافق": "facilities[]",
-    "ميزات": "features[]",
-    "خدمات": "services[]",
-    "أجهزة": "devices[]"
+    "مرافق": "facilities",
+    "ميزات": "features",
+    "خدمات": "services",
+    "أجهزة": "devices"
   };
   const toggleAmenity = (category, amenity) => {
 
@@ -414,14 +416,14 @@ const [position, setPosition] = useState([30.044376903556085, 31.235749743857397
 
         // Append other form fields
         for (const [key, value] of Object.entries(formData)) {
-          if(key!=="images[]"&&key!=="primary_picture"&&value){
+          if(key!=="images"&&key!=="primary_picture"&&value){
             allFormData.append(key, value);
           }
         }
         // Append images
         if (images) {
           for (let i = 0; i < images.length; i++) {
-            allFormData.append('images[]', formData['images[]'][i]);
+            allFormData.append('images', formData['images'][i]);
           }
         }
         if (primary_picture) {
@@ -962,13 +964,13 @@ const handleOptionSelect = (value) => {
                           يجب اختيار صوره للاعلان
                         </Form.Control.Feedback>
                       </Form.Group>
-                      <Form.Group controlId="images[]" className="mb-3">
+                      <Form.Group controlId="images" className="mb-3">
                         <Form.Label className="required">
                           قم بتحميل صور الاعلان
                         </Form.Label>
                         <Form.Control
                           type="file"
-                          name="images[]"
+                          name="images"
                           onChange={handleChange}
                           multiple
                         />
@@ -1006,7 +1008,7 @@ const handleOptionSelect = (value) => {
                                 >
                                   <img
                                     key={index}
-                                    src={image.image}
+                                    src={image}
                                     alt={`AdditionalImage ${index}`}
                                     style={{
                                       maxWidth: "150px",
@@ -1021,7 +1023,7 @@ const handleOptionSelect = (value) => {
                                     setDel={setDeleteImages}
                                     OldImages={oldImages}
                                     DeleteImages={deleteImages}
-                                    img={image.image}
+                                    img={image}
                                   />
                                 </div>
                               ))}

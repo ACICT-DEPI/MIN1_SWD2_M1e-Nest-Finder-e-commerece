@@ -72,8 +72,8 @@ export default function EditGovernments() {
       allFormData.append("image", editData.image[0]);
     }
     try {
-      await api.post(
-        `/updateGovernorate/${editData.id}`,
+      await api.patch(
+        `/governorates/${editData.id}`,
         allFormData,
         {
           headers: {
@@ -212,7 +212,7 @@ export default function EditGovernments() {
             </div>
           </Form.Group>
         </Row>
-        <div className="text-center d-flex justify-content-center mt-4">
+        <div className="text-center d-flex justify-content-center my-4">
           <Button variant="primary" type="submit" disabled={load}>
             {load ? <LoadingBtn /> : "حفظ التعديل"}
           </Button>

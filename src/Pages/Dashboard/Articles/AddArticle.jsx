@@ -47,15 +47,6 @@ export default function AddArticle() {
   });
   const [article_image, setArticle_image] = useState(null);
 
-  function extractImageUrls(htmlString) {
-    const urls = [];
-    const regex = /<img[^>]+src="([^">]+)"/g;
-    let match;
-    while ((match = regex.exec(htmlString)) !== null) {
-      urls.push(match[1]);
-    }
-    return urls;
-  }
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -75,7 +66,7 @@ export default function AddArticle() {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const response = await api.get("/getallcategories");
+        const response = await api.get("/categories");
         setCategories(response.data.data);
       } catch (error) {
         console.log(error);
@@ -83,8 +74,6 @@ export default function AddArticle() {
     };
     fetchCategory();
   }, []);
-
-
 
 
   const handelSubmit = async (e) => {
@@ -101,13 +90,11 @@ export default function AddArticle() {
         formData.category_id &&
         article_image
       ) {
-        const imageUrls = extractImageUrls(article_body);
         const formDataToSend = new FormData();
         formDataToSend.append("article_image", article_image);
         formDataToSend.append("article_body", article_body);
         formDataToSend.append("admin_id", adminId);
-        let tags = TagsInBasket.join(",");
-        formDataToSend.append("tags", tags);
+        formDataToSend.append("tags", TagsInBasket);
 
         for (const key in formData) {
           if(key==='article_url'){
@@ -121,43 +108,25 @@ export default function AddArticle() {
         // Set Post
         try {
           setLoad(true);
-          const response = await api.post("/storePost", formDataToSend, {
+          await api.post("/articles", formDataToSend, {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "multipart/form-data",
             },
           });
-          const postId = response.data.data.post_id;
-          //Confirm images url
-          try {
-            await api.post(
-              `/handlingPostImages/${postId}`,
-              { image_paths: imageUrls },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-            if(formData.finished){
-                setAlert({ msg: "تم نشر المدونة", variant: 1 });
-                setTimeout(() => {
-                  navigate("/dashboard/Blogs");
-                }, 2000);
-            }
-            else{
-                setAlert({ msg: "تم حفظ المسودة", variant: 1 });
-                setTimeout(() => {
-                  navigate("/dashboard/Drafts");
-                }, 2000);
-            }
-            setShow(true);
-          } catch (error) {
-            console.log(error)        
-            setAlert({ msg: "حدث خطا اثناء نشر المدونة", variant: 2 });    
-            setShow(true) 
-          }
+          if(formData.finished){
+            setAlert({ msg: "تم نشر المدونة", variant: 1 });
+            setTimeout(() => {
+              navigate("/dashboard/Blogs");
+            }, 2000);
+        }
+        else{
+            setAlert({ msg: "تم حفظ المسودة", variant: 1 });
+            setTimeout(() => {
+              navigate("/dashboard/Drafts");
+            }, 2000);
+        }
+        setShow(true);
         } catch (error) {
           console.log(error)
           if (error.response.status === 422) {
@@ -173,6 +142,9 @@ export default function AddArticle() {
                 Cookies.remove(cookieName);
               });
               setShow(true);
+          }else{
+            setAlert({ msg: "حدث خطا اثناء نشر المدونة", variant: 2 });    
+            setShow(true) 
           }
         } finally {
           setLoad(false);
@@ -277,7 +249,7 @@ export default function AddArticle() {
               >
                 <option value="">اختر نوع المدونة</option>
                 {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
+                  <option key={category._id} value={category._id}>
                     {category.category_name}
                   </option>
                 ))}

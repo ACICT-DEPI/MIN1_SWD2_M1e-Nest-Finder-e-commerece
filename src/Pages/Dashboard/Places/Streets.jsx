@@ -19,7 +19,6 @@ import DeleteItem from "../../../Components/DeleteItem/DeleteItem.jsx";
 export default function Regions() {
 
   const role = Cookies.get("role")
-  // const role = localStorage.getItem("role")
   const token = Cookies.get("token");
   const [getForm, setGetForm] = useState({
     governorate: "",
@@ -70,7 +69,7 @@ export default function Regions() {
     const fetchGov = async () => {
       try {
         setOverlay(true);
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -91,7 +90,7 @@ export default function Regions() {
       try {
         setOverlay(true);
         const response = await api.get(
-          `/governorates/${getForm.governorate}/cities`,
+          `/cities/${getForm.governorate}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -116,7 +115,7 @@ export default function Regions() {
       try {
         setOverlay(true);
         const response = await api.get(
-          `/governorates/city/${getForm.city}/regions`,
+          `/regions/${getForm.city}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -139,7 +138,7 @@ export default function Regions() {
   const fetchStreet = async () => {
     try {
       setOverlay(true);
-      const response = await api.get(`/streetsByRegion/${getForm.region}`, {
+      const response = await api.get(`/streets/${getForm.region}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -151,18 +150,19 @@ export default function Regions() {
       setOverlay(false);
     }
   };
+
   useEffect(() => {
     if (getForm.region) {
       fetchStreet();
     }
   }, [getForm.region]);
+
   // تعديل الشوارع
   const handleEdite = async () => {
     if (newStreetName) {
       try {
         setLoadEdit(true);
-        const response = await api.post(
-          `updateStreet/${selectedItemId}`,
+        await api.patch(`/streets/${selectedItemId}`,
           { name: newStreetName, region_id: getForm.region },
           {
             headers: {
@@ -179,11 +179,12 @@ export default function Regions() {
       }
     }
   };
+
   // حذف شارع
   const handleDelete = async (id) => {
     try {
       setLoadId(true);
-      const response = await api.post(`/deleteStreet/${id}`, null, {
+      await api.delete(`/streets/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -195,14 +196,15 @@ export default function Regions() {
       setLoadId(false);
     }
   };
+
   // اضافه شارع
   const handleAddStreets = async (e) => {
     e.preventDefault();
     setLoad(true);
     if (getForm.region) {
       try {
-        const response = await api.post(
-          "/addStreet",
+        await api.post(
+          "/streets",
           { name: streetName, region_id: getForm.region },
           {
             headers: {
@@ -222,6 +224,7 @@ export default function Regions() {
       setLoad(false);
     }
   };
+
   function handleChangeStreetName(e) {
     setStreetName(e.target.value);
   }
@@ -241,7 +244,7 @@ export default function Regions() {
           <option key={0} value="">
             اختر المحافظة
           </option>
-          {governorates.map((gov, index) => (
+          {governorates.map((gov) => (
             <option key={gov.id} value={gov.id}>
               {gov.name}
             </option>
@@ -323,7 +326,6 @@ export default function Regions() {
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>اسم الشارع</th>
                   <th colSpan={2} className="text-center">
                     أجراءات
@@ -332,14 +334,13 @@ export default function Regions() {
               </thead>
               <tbody>
                 {streets.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
+                  <tr key={item._id}>
                     <td>{item.name}</td>
                     <td>
                       <Button
                         variant="warning"
                         onClick={() => {
-                          handleShow(item.id, item.name);
+                          handleShow(item._id, item.name);
                         }}
                       >
                         تعديل
@@ -373,7 +374,7 @@ export default function Regions() {
                     {role==='admin'&&<DeleteItem
                       id={selectedItemId}
                       setId={setSelectedItemId}
-                      itemId={item.id}
+                      itemId={item._id}
                       DeleteFun={handleDelete}
                       load={loadId}
                     />}

@@ -27,7 +27,7 @@ export default function ShowPostsComments({ role }) {
   const handelGetPostsComments = async () => {
     try {
       setOverlay(true);
-      const response = await api.get(`/get-posts-comments`, {
+      const response = await api.get(`/comments/articles`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -43,7 +43,7 @@ export default function ShowPostsComments({ role }) {
           Cookies.remove(cookieName);
         });
         setTimeout(() => {
-          navigate("/admin-login");
+          navigate("/login");
         }, 2500);
       } else {
         setAlert({
@@ -61,13 +61,12 @@ export default function ShowPostsComments({ role }) {
   }, [token]);
 
   // حذف التعليق
-  const handleDelete = async (id) => {
-    setSelectedItemId(id);
+  const handleDelete = async (comment_id) => {
+    setSelectedItemId(comment_id);
     setLoadId(true);
     try {
-      await api.post(
-        `delete-comment`,
-        { comment_id: id },
+      await api.delete(
+        `/comments/${comment_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,7 +86,7 @@ export default function ShowPostsComments({ role }) {
           Cookies.remove(cookieName);
         });
         setTimeout(() => {
-          navigate("/admin-login");
+          navigate("/login");
         }, 2500);
       }
       console.log(error);
@@ -111,22 +110,19 @@ export default function ShowPostsComments({ role }) {
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>التعليق</th>
                   <th>صاحب التعليق</th>
                   <th>صوره المستخدم</th>
                   <th>نوع المستخدم</th>
                   <th>رؤيه التعليق</th>
-                  <th>تاريخ كتابته</th>
                   <th>أجراءات</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((item) => (
-                  <tr key={item.id} className="text-center">
-                    <td>{item.id}</td>
+                  <tr key={item._id} className="text-center">
                     <td>{item.comment}</td>
-                    <td>{item.user_name}</td>
+                    <td>{item.user_id.first_name}{item.user_id.last_name}</td>
                     <td
                       style={{
                         display: "flex",
@@ -135,24 +131,21 @@ export default function ShowPostsComments({ role }) {
                       }}
                     >
                       <Avatar
-                        src={item.user_image}
+                        src={item.user_id.image}
                         sx={{ "--Avatar-size": "3rem" }}
                       />
                     </td>
                     <td>{item.user_role}</td>
                     <td>
-                      <Link to={`/blog/${item.post_url}`}>
+                      <Link to={`/blog/${item.article_id.article_url}`}>
                         <FontAwesomeIcon icon={faEye} /> عرض
                       </Link>
-                    </td>
-                    <td>
-                      {format(new Date(item.created_at), "dd-MM-yyyy HH:mm:ss")}
                     </td>
 
                     <DeleteItem
                       id={selectedItemId}
                       setId={setSelectedItemId}
-                      itemId={item.id}
+                      itemId={item._id}
                       DeleteFun={handleDelete}
                       load={loadId}
                     />

@@ -21,9 +21,9 @@ export default function GovPage() {
       try {
         setOverlay(true);
         setLoading(true);
-        const response = await api.get(`/getAdsByGovernorate/${gov}`);
-        setData(response.data.data);
+        const response = await api.get(`/ads/gov/${gov}`);
         console.log(response.data.data);
+        setData(response.data.data);
       } catch (error) {
         console.log(error);
         if (error.response.data.status === 404) {
@@ -39,7 +39,7 @@ export default function GovPage() {
 
   // Set default SEO settings
   usePageSEO({
-    title: data.meta_title || "محافظة",
+    title: data.meta_title|| data.name || "محافظة",
     description: data.meta_description || "",
     canonical: `https://depi-final-project.vercel.app/${gov}`
   });

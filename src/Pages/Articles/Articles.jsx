@@ -25,7 +25,7 @@ export default function Articles() {
     const fetchArticle = async () => {
       try {
         setOverlay(true);
-        const response = await api.post(`/getAPosts`, { page: currentPage });
+        const response = await api.get(`/articles?page=${currentPage}`);
         setArticles(response.data.data.posts);
         setTotalPages(response.data.data.total_pages);
       } catch (error) {

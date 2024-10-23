@@ -43,7 +43,7 @@ function CategoryArticle() {
   const fetchData = async () => {
     try {
       setOverlay(true);
-      const response = await api.get(`/getallcategories`);
+      const response = await api.get(`/categories`);
       setData(response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -59,13 +59,12 @@ function CategoryArticle() {
     if (newCategory) {
       try {
         setLoadEdit(true);
-        const response = await api.post(
-          `/categories/${selectedItemId}?category_name=${newCategory.trim().replace(/ /g, "-")}`,
-          null,
+        await api.put(`categories/${selectedItemId}`,
+          {category_name:newCategory.trim().replace(/ /g, "-")},
           {
             headers: {
               Authorization: `Bearer ${token}`,
-            },
+            }
           }
         );
         fetchData();
@@ -96,8 +95,7 @@ function CategoryArticle() {
   const handleDelete = async (id) => {
     setLoadId(true);
     try {
-      // const token = Cookies.get("token")
-      const response = await api.delete(`/delCategory/${id}`, {
+      await api.delete(`/categories/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -114,7 +112,7 @@ function CategoryArticle() {
           Cookies.remove(cookieName);
         });
         setTimeout(() => {
-          navigate("/admin-login");
+          navigate("/login");
         }, 2500);
       } else {
         setAlert({
@@ -142,8 +140,8 @@ function CategoryArticle() {
     e.preventDefault();
     setLoad(true);
     try {
-      const response = await api.post(
-        "/AddCategory",
+      await api.post(
+        "/categories",
         { category_name: category_name.trim().replace(/ /g, "-")},
         {
           headers: {
@@ -163,7 +161,7 @@ function CategoryArticle() {
           Cookies.remove(cookieName);
         });
         setTimeout(() => {
-          navigate("/admin-login");
+          navigate("/login");
         }, 2500);
       } else {
         setAlert({
@@ -212,7 +210,6 @@ function CategoryArticle() {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    <th>#</th>
                     <th>اسم التصنيف</th>
                     <th>تعديل</th>
                     <th>حذف</th>
@@ -220,14 +217,13 @@ function CategoryArticle() {
                 </thead>
                 <tbody>
                   {data.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.id}</td>
+                    <tr key={item._id}>
                       <td>{item.category_name}</td>
                       <td>
                         <Button
                           variant="warning"
                           onClick={() => {
-                            handleShow(item.id, item.category_name);
+                            handleShow(item._id, item.category_name);
                           }}
                         >
                           تعديل
@@ -264,7 +260,7 @@ function CategoryArticle() {
                         <DeleteItem
                           id={selectedItemId}
                           setId={setSelectedItemId}
-                          itemId={item.id}
+                          itemId={item._id}
                           DeleteFun={handleDelete}
                           load={loadId}
                         />

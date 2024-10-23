@@ -27,11 +27,12 @@ const navigate = useNavigate();
   const handelGetAdsComments = async () => {
     try {
       setOverlay(true);
-      const response = await api.get(`/get-ads-comments`, {
+      const response = await api.get(`/comments/ads`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data.data);
       setData(response.data.data);
     } catch (error) {
       if (error.response.status === 401) {
@@ -43,7 +44,7 @@ const navigate = useNavigate();
           Cookies.remove(cookieName);
         });
         setTimeout(() => {
-          navigate("/admin-login");
+          navigate("/login");
         }, 2500);
       }
       else{
@@ -61,13 +62,12 @@ const navigate = useNavigate();
 
 
     // حذف التعليق
-    const handleDelete = async (id) => {
-      setSelectedItemId(id);
+    const handleDelete = async (comment_id) => {
+      setSelectedItemId(comment_id);
       setLoadId(true);
       try {
-        await api.post(
-          `delete-comment`,
-          { comment_id:id },
+        await api.delete(
+          `comments/${comment_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -87,7 +87,7 @@ const navigate = useNavigate();
             Cookies.remove(cookieName);
           });
           setTimeout(() => {
-            navigate("/admin-login");
+            navigate("/login");
           }, 2500);
         }
         console.log(error);
@@ -110,22 +110,19 @@ const navigate = useNavigate();
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>التعليق</th>
                   <th>صاحب التعليق</th>
                   <th>صوره المستخدم</th>
                   <th>نوع المستخدم</th>
                   <th>رؤيه التعليق</th>
-                  <th>تاريخ كتابته</th>
                   <th>أجراءات</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((item) => (
-                  <tr key={item.id} className="text-center">
-                    <td>{item.id}</td>
+                  <tr key={item._id} className="text-center">
                     <td>{item.comment}</td>
-                    <td>{item.user_name}</td>
+                    <td>{item.user_id.first_name} {item.user_id.last_name}</td>
                     <td
                       style={{
                         display: "flex",
@@ -134,24 +131,20 @@ const navigate = useNavigate();
                       }}
                     >
                       <Avatar
-                        src={item.user_image}
+                        src={item.user_id.image}
                         sx={{ "--Avatar-size": "3rem" }}
                       />
                     </td>
                     <td>{item.user_role}</td>
                     <td>
-                        <Link to={`/property/${item.ad_slug}`}>
+                        {item.ad_id&&<Link to={`/property/${item.ad_id.slug}`}>
                         <FontAwesomeIcon icon={faEye} /> عرض
-                        </Link>
-                      </td>
-                    <td>
-                      {format(new Date(item.created_at), "dd-MM-yyyy HH:mm:ss")}
+                        </Link>}
                     </td>
-
                     <DeleteItem
                         id={selectedItemId}
                         setId={setSelectedItemId}
-                        itemId={item.id}
+                        itemId={item._id}
                         DeleteFun={handleDelete}
                         load={loadId}
                       />

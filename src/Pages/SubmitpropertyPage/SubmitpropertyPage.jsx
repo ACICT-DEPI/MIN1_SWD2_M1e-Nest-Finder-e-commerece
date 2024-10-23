@@ -24,6 +24,13 @@ function SubmitpropertyPage() {
   // Array containing property cards data
   const propertyCards = [
     {
+      image: QuickAds,
+      alt: 'quick-property',
+      title: 'اعلان سريع',
+      description: 'اضف اعلانك بسرعه وسهوله',
+      link: '/add-quick-property',
+    },
+    {
       image: image1,
       alt: 'شقق و دوبلكس',
       title: 'شقق و دوبلكس',
@@ -96,9 +103,7 @@ function SubmitpropertyPage() {
           </Row>
 
 
-
-
-          <Row className='justify-content-center'>
+          {/* <Row className='justify-content-center'>
             <Col key="0" sm={6} md={6} lg={5} className="mb-4">
               <Link to="/add-quick-property" className="text-decoration-none">
                 <Card className="h-100 shadow-sm">
@@ -107,11 +112,11 @@ function SubmitpropertyPage() {
                     src={QuickAds}
                     alt="quick-property"
                     className="img-fluid"
-                    // style={{ height: '300px' }}
-                    style={{ height: '300px', objectFit: 'cover' }}
+
+                    style={{ height: '300px'}}
                   />
                   <Card.Body className="d-flex flex-column">
-                    <Card.Title className="text-primary">اعلان سريع</Card.Title>
+                    <Card.Title className="text-primary text-center">اعلان سريع</Card.Title>
                     <Card.Text className="flex-grow-1">اضف اعلانك بسرعه وسهوله </Card.Text>
                     <div className="text-end mt-auto">
                       <small className="text-muted">
@@ -122,7 +127,7 @@ function SubmitpropertyPage() {
                 </Card>
               </Link>
             </Col>
-          </Row>
+          </Row> */}
           <hr></hr>
           <Row>
             {propertyCards.map((property, index) => (
@@ -137,7 +142,7 @@ function SubmitpropertyPage() {
                       style={{ height: '200px', objectFit: 'cover' }}
                     />
                     <Card.Body className="d-flex flex-column">
-                      <Card.Title className="text-primary">{property.title}</Card.Title>
+                      <Card.Title className="text-primary text-center">{property.title}</Card.Title>
                       <Card.Text className="flex-grow-1">{property.description}</Card.Text>
                       <div className="text-end mt-auto">
                         <small className="text-muted">

@@ -77,7 +77,6 @@ export default function GeneralPages() {
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>اسم الصفحة</th>
                   <th>رابط الصفحة</th>
                   <th>ميتا دسكريبشن</th>
@@ -87,7 +86,6 @@ export default function GeneralPages() {
               <tbody>
                 {data.map((item) => (
                   <tr key={item.id} className="text-center">
-                    <td>{item.id}</td>
                     <td>{item.name}</td>
                     <td>
                       <Link to={`/${item.url}`}>{item.url}</Link>

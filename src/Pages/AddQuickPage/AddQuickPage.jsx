@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../Components/Header/Header.jsx";
 import Footer from "../../Components/Footer/Footer.jsx";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
@@ -21,7 +21,7 @@ const AddQuickPage = () => {
   const [formData, setFormData] = useState({
     user_id: Cookies.get("user_id"), //👍
     details_ar: "", //👍
-    "images[]": "", //👍
+    "images": "", //👍
     governorate: "", //👍
     city: "", //👍
     type: "sale", //👍
@@ -37,7 +37,7 @@ const AddQuickPage = () => {
   useEffect(() => {
     const fetchGov = async () => {
       try {
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -67,7 +67,7 @@ const AddQuickPage = () => {
         return e.name === formData.governorate;
       })["id"];
       try {
-        const response = await api.get(`/governorates/${govId}/cities`, {
+        const response = await api.get(`/cities/${govId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -87,7 +87,7 @@ const AddQuickPage = () => {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    if (type === "file" && name === "images[]") {
+    if (type === "file" && name === "images") {
       setImages(Array.from(files));
       setFormData({
         ...formData,
@@ -131,23 +131,27 @@ const AddQuickPage = () => {
 
         // Append images
         if (images) {
+          console.log(images)
+          console.log(formData.images)
           for (let i = 0; i < images.length; i++) {
-            allFormData.append("images[]", formData["images[]"][i]);
+            allFormData.append("images", formData.images[i]);
           }
         }
 
+
         // Make property
-        const response = await api.post("/AddProperties", allFormData, {
+        const response = await api.post("/properties", allFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         });
-        const prop_id = response.data.data.property_id;
+        const prop_id = response.data.data._id;
+        console.log(response.data)
         // Make Ads
         try {
           await api.post(
-            "/makeAd",
+            "/ads",
             {
               property_id: prop_id,
               phone: formData.phone,
@@ -163,14 +167,14 @@ const AddQuickPage = () => {
             }
           );
           // ملئ بيانات التواصل مباشرة
-          const phone = Cookies.get("phone") || null;
-          const whats_phone = Cookies.get("whats_phone") || null;
+          const phone = Cookies.get("phone") || "";
+          const whats_phone = Cookies.get("whats_phone") || "";
            
            
-          if (phone === null) {
+          if (phone === "") {
             Cookies.set("phone", formData.phone);
           }
-          if (whats_phone === null) {
+          if (whats_phone === "") {
             Cookies.set("whats_phone", formData.whats_phone);
           }
           setAlert({ msg: "تم حفظ الإعلان بنجاح", variant: 1 });
@@ -296,13 +300,13 @@ const AddQuickPage = () => {
                       </Form.Group>
                     </Col>
                   </Row>
-                  <Form.Group controlId="images[]" className="mb-3">
+                  <Form.Group controlId="images" className="mb-3">
                     <Form.Label className="required">
                       قم بتحميل صور الاعلان
                     </Form.Label>
                     <Form.Control
                       type="file"
-                      name="images[]"
+                      name="images"
                       onChange={handleChange}
                       multiple
                       required

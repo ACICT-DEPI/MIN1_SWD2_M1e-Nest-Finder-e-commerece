@@ -25,7 +25,7 @@ export default function AllAds() {
     const handelAllAds = async () => {
         try {
             setOverlay(true)
-            const response = await api.get(`/getAllAds`, {
+            const response = await api.get(`/ads`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -42,7 +42,7 @@ export default function AllAds() {
                 Cookies.remove(cookieName);
               });
               setTimeout(() => {
-                navigate("/admin-login");
+                navigate("/login");
               }, 2500);
             }
             else{
@@ -62,7 +62,7 @@ export default function AllAds() {
         setSelectedItemId(id);
         setLoadId(true);
         try {
-            await api.post(`/deleteAd/${id}`, {},{
+            await api.delete(`/ads/${id}`,{
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -89,7 +89,6 @@ export default function AllAds() {
                 <Table striped bordered hover>
                   <thead>
                     <tr>
-                      <th>#</th>
                       <th>اسم العقار</th>
                       <th>الفئه</th>
                       <th>نوع العقار</th>
@@ -101,10 +100,9 @@ export default function AllAds() {
                   <tbody>
                     {data.map((item) => (
                       <tr key={item.id} className="text-center">
-                        <td>{item.id}</td>
-                        <td>{item.property["Arabic Name"]}</td>
-                        <td>{item.property.Category}</td>
-                        <td>{item.property["Sub Category"]}</td>
+                        <td>{item.property.name_ad_ar}</td>
+                        <td>{item.property.category}</td>
+                        <td>{item.property.sub_category}</td>
                         <td>
                           <Link to={`/property/${item.slug}`}>
                             الذهاب للاعلان
@@ -116,11 +114,6 @@ export default function AllAds() {
                             "dd-MM-yyyy HH:mm:ss"
                           )}
                         </td>
-                        {/* <td>
-                                   <Button variant="danger" onClick={() => handleDelete(item.id)}>
-                                       حذف
-                                   </Button>
-                               </td> */}
                         <DeleteItem
                           id={selectedItemId}
                           setId={setSelectedItemId}

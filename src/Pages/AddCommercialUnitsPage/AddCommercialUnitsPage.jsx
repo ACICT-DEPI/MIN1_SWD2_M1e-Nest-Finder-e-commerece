@@ -33,6 +33,9 @@ import AlertMessage from "../../Components/Alert/Alert.jsx";
 import { useNavigate } from "react-router-dom";
 import AlertArError from "../../Components/Alert/AlertArError.jsx";
 import { Autocomplete, TextField } from "@mui/joy";
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
+
 const AddCommercialUnitsPage = () => {
   const token = Cookies.get("token");
   const [load1, setLoad1] = useState(false);
@@ -45,11 +48,11 @@ const AddCommercialUnitsPage = () => {
   const [alertArError, setAlertArError] = useState([]);
 
   const myIcon = new L.Icon({
-    iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    iconUrl: markerIcon,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+    shadowUrl: markerShadow,
     shadowSize: [41, 41],
   });
 
@@ -77,7 +80,7 @@ const AddCommercialUnitsPage = () => {
     floor_number: "", //👍
     mall_name: "", //👍
     primary_picture: "", //👍
-    "images[]": "", //👍
+    "images": "", //👍
     video_link: "", //👍
     full_address: "", //👍
     governorate: "", //👍
@@ -87,9 +90,9 @@ const AddCommercialUnitsPage = () => {
     deliver_date: "", //👍
     finishing_type: "", //👍
     furnished: "", //👍
-    "facilities[]": [], //👍
-    "services[]": [], //👍
-    "devices[]": [], //👍
+    "facilities": [], //👍
+    "services": [], //👍
+    "devices": [], //👍
     sub_category: "",
   });
   const [primary_picture, setPrimary_picture] = useState(null);
@@ -116,7 +119,7 @@ const AddCommercialUnitsPage = () => {
   useEffect(() => {
     const fetchGov = async () => {
       try {
-        const response = await api.get("/governorates", {
+        const response = await api.get("/governorates/authGov", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -147,7 +150,7 @@ const AddCommercialUnitsPage = () => {
       })["id"];
 
       try {
-        const response = await api.get(`/governorates/${govId}/cities`, {
+        const response = await api.get(`/cities/${govId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -167,7 +170,7 @@ const AddCommercialUnitsPage = () => {
         return e.name === formData.city;
       })["id"];
       try {
-        const response = await api.get(`/governorates/city/${cityId}/regions`, {
+        const response = await api.get(`regions/${cityId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -182,11 +185,11 @@ const AddCommercialUnitsPage = () => {
   // Street
   useEffect(() => {
     const fetchStreet = async () => {
-      const streetId = regions.find((e) => {
+      const regionId = regions.find((e) => {
         return e.name === formData.region;
       })["id"];
       try {
-        const response = await api.get(`/streetsByRegion/${streetId}`, {
+        const response = await api.get(`/streets/${regionId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -199,14 +202,14 @@ const AddCommercialUnitsPage = () => {
     fetchStreet();
   }, [formData.region]);
 
-  // Compound
+  // Malls
   useEffect(() => {
     const fetchMolls = async () => {
       const cityId = cities.find((e) => {
         return e.name === formData.city;
       })["id"];
       try {
-        const response = await api.get(`/get_malls_by_city/${cityId}`, {
+        const response = await api.get(`/malls/${cityId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -238,7 +241,7 @@ const AddCommercialUnitsPage = () => {
     if (type === "file") {
       if (name === "primary_picture") {
         setPrimary_picture(files[0]);
-      } else if (name === "images[]") {
+      } else if (name === "images") {
         setImages(Array.from(files));
       }
       setFormData({
@@ -253,9 +256,9 @@ const AddCommercialUnitsPage = () => {
     }
   };
   const fieldMapping = {
-    مرافق: "facilities[]",
-    خدمات: "services[]",
-    أجهزة: "devices[]",
+    مرافق: "facilities",
+    خدمات: "services",
+    أجهزة: "devices",
   };
   const toggleAmenity = (category, amenity) => {
     const fieldName = fieldMapping[category];
@@ -333,7 +336,7 @@ const AddCommercialUnitsPage = () => {
 
         // Append other form fields
         for (const [key, value] of Object.entries(formData)) {
-          if (key !== "images[]" && key !== "primary_picture") {
+          if (key !== "images" && key !== "primary_picture") {
             allFormData.append(key, value);
           }
         }
@@ -341,7 +344,7 @@ const AddCommercialUnitsPage = () => {
         // Append images
         if (images) {
           for (let i = 0; i < images.length; i++) {
-            allFormData.append("images[]", formData["images[]"][i]);
+            allFormData.append("images", formData["images"][i]);
           }
         }
 
@@ -354,13 +357,13 @@ const AddCommercialUnitsPage = () => {
         allFormData.append("longitude", position[1]);
 
         // Post the data
-        const response = await api.post("/AddProperties", allFormData, {
+        const response = await api.post("/properties", allFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         });
-        const prop_id = response.data.data.property_id;
+        const prop_id = response.data.data._id;
         setFormData2({ ...formData2, property_id: prop_id });
         setLoad1(false);
         // للانتقال لاخر صفحه و حفظ الاعلان
@@ -397,10 +400,9 @@ const AddCommercialUnitsPage = () => {
       setShow(true);
     } else {
       setLoad2(true);
-      const token = Cookies.get("token");
       try {
         const response = await api.post(
-          "/makeAd",
+          "/ads",
           {
             ...formData2,
           },
@@ -412,16 +414,16 @@ const AddCommercialUnitsPage = () => {
           }
         );
         // ملئ بيانات التواصل مباشرة
-        const user_type = Cookies.get("user_type") || null;
-        const phone = Cookies.get("phone") || null;
-        const whats_phone = Cookies.get("whats_phone") || null;
-        if (phone === null) {
+        const user_type = Cookies.get("user_type") || "";
+        const phone = Cookies.get("phone") || "";
+        const whats_phone = Cookies.get("whats_phone") || "";
+        if (phone === "") {
           Cookies.set("phone", formData2.phone);
         }
-        if (user_type === null) {
+        if (user_type === "") {
           Cookies.set("user_type", formData2.advertiser_type);
         }
-        if (whats_phone === null) {
+        if (whats_phone === "") {
           Cookies.set("whats_phone", formData2.whats_phone);
         }
         setAlert({ msg: "تم حفظ الإعلان بنجاح", variant: 1 });
@@ -932,11 +934,11 @@ const AddCommercialUnitsPage = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
 
-                        <Form.Group controlId="images[]" className="mb-3">
+                        <Form.Group controlId="images" className="mb-3">
                           <Form.Label>قم بتحميل باقي الصور</Form.Label>
                           <Form.Control
                             type="file"
-                            name="images[]"
+                            name="images"
                             onChange={handleChange}
                             multiple
                           />

@@ -23,7 +23,7 @@ export default function CompoundPage() {
       try {
         setOverlay(true)
         setLoading(true)
-        const response = await api.get(`/getAdsByCompound/${compound}`);
+        const response = await api.get(`ads/compound/${compound}`);
         setData(response.data.data)
       } catch (error) {
         console.log(error);
@@ -42,7 +42,7 @@ export default function CompoundPage() {
 
   // Set default SEO settings
   usePageSEO({
-    title: data.meta_title|| "مشروع عقارى",
+    title: data.meta_title || data.name || "مشروع عقارى",
     description: data.meta_description || "",
     canonical: `https://depi-final-project.vercel.app/${gov}/${city}/${compound}`
   });

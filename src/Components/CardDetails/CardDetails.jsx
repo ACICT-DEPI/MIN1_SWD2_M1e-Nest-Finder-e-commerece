@@ -14,12 +14,13 @@ import {
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import VideoEmbed from "../../utility/VideoEmbed/VideoEmbed";
-import ShowFilterToUser from "../Filters/ShowFilterToUser";
 import usePageSEO from "../../hooks/usePageSEO";
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
 
 const CardDetails = ({ propertyDetails }) => {
   usePageSEO({
-    title: propertyDetails.property["Arabic Name"]
+    title: propertyDetails.property.name_ad_ar
 });
 
   const position = [
@@ -27,11 +28,11 @@ const CardDetails = ({ propertyDetails }) => {
     propertyDetails.property.longitude,
   ];
   const myIcon = new L.Icon({
-    iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    iconUrl: markerIcon,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+    shadowUrl: markerShadow,
     shadowSize: [41, 41],
   });
 
@@ -49,9 +50,9 @@ const CardDetails = ({ propertyDetails }) => {
   const [subCategoryName, setSubCategoryName] = useState("");
   useEffect(() => {
     setSubCategoryName(
-      propertyDetails.property["Sub Category"] === "فيلا منفصلة" ||
-        propertyDetails.property["Sub Category"] === "تاون هاوس" ||
-        propertyDetails.property["Sub Category"] === "توين هاوس"
+      propertyDetails.property.sub_category === "فيلا منفصلة" ||
+        propertyDetails.property.sub_category === "تاون هاوس" ||
+        propertyDetails.property.sub_category === "توين هاوس"
     );
   }, [propertyDetails]);
 
@@ -70,7 +71,7 @@ const CardDetails = ({ propertyDetails }) => {
                   <Col className="p-4" style={{ background: "white" }}>
                     <div>
                       <p style={{ color: "#1976d2", fontSize: "25px" }}>
-                        {propertyDetails.property["Arabic Name"]}
+                        {propertyDetails.property.name_ad_ar}
                       </p>
                     </div>
                     <div style={{ textAlign: "left" }}>
@@ -123,7 +124,7 @@ const CardDetails = ({ propertyDetails }) => {
                       {propertyDetails.property.images.map((image, index) => (
                         <div key={index}>
                           <img
-                            src={image.image}
+                            src={image}
                             alt={`Slide ${index}`}
                             className="img-fluid w-100"
                             style={{ width: "100%", height: "400px" }}
@@ -175,7 +176,7 @@ const CardDetails = ({ propertyDetails }) => {
                             العقار
                           </th>
                           <th className="w-50 p-3 leftTablePart">
-                            {propertyDetails.property.Type === "sale"
+                            {propertyDetails.property.type === "sale"
                               ? "للبيع"
                               : "للايجار"}
                           </th>
@@ -188,7 +189,7 @@ const CardDetails = ({ propertyDetails }) => {
                             نوع العقار
                           </th>
                           <th className="w-50 p-3 leftTablePart">
-                            {propertyDetails.property["Sub Category"]}
+                            {propertyDetails.property.sub_category}
                           </th>
                         </tr>
                         <tr>
@@ -228,8 +229,8 @@ const CardDetails = ({ propertyDetails }) => {
                           </th>
                         </tr>
                         {(subCategoryName ||
-                          propertyDetails.property.Category == "مبانى" ||
-                          propertyDetails.property.Category == "منازل") &&
+                          propertyDetails.property.category == "مبانى" ||
+                          propertyDetails.property.category == "منازل") &&
                           propertyDetails.property.floors != null && (
                             <tr>
                               <th
@@ -317,7 +318,7 @@ const CardDetails = ({ propertyDetails }) => {
                             ج.م
                           </th>
                         </tr>
-                        {propertyDetails.property.Type === "sale" && (
+                        {propertyDetails.property.type === "sale" && (
                           <>
                             {propertyDetails.property.payment_method && (
                               <tr>
@@ -396,7 +397,7 @@ const CardDetails = ({ propertyDetails }) => {
                           </>
                         )}
 
-                        {propertyDetails.property.Type === "rent" && (
+                        {propertyDetails.property.type === "rent" && (
                           <>
                             {propertyDetails.property.renting_type && (
                               <tr>
@@ -413,8 +414,7 @@ const CardDetails = ({ propertyDetails }) => {
                                     ? "ربع سنوى"
                                     : propertyDetails.property.renting_type == 6
                                     ? "نصف سنوى"
-                                    : propertyDetails.property.renting_type ==
-                                      12
+                                    : propertyDetails.property.renting_type == 12
                                     ? "سنوى"
                                     : ""}
                                 </th>
@@ -557,7 +557,7 @@ const CardDetails = ({ propertyDetails }) => {
                           propertyDetails.whats_phone
                         }&text=${encodeURIComponent(
                           "مرحباً، أنا مهتم بعقارك الموجود على Nest Finder.: "
-                        )}${encodeURIComponent(`http://varnda.com/property/${encodeURIComponent(propertyDetails.slug)}`)}`}
+                        )}${encodeURIComponent(`https://depi-final-project.vercel.app//property/${encodeURIComponent(propertyDetails.slug)}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -724,13 +724,7 @@ const CardDetails = ({ propertyDetails }) => {
             </Col>
 
             <Col md={12} lg={4} dir="rtl">
-              <ShowFilterToUser
-                type={propertyDetails.property.Type}
-                gov={propertyDetails.property.governorate}
-                city={propertyDetails.property.city}
-                region={propertyDetails.property.region}
-                compound={propertyDetails.property.compound}
-              />
+
             </Col>
           </Row>
         </Container>

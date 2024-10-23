@@ -19,12 +19,12 @@ export default function AllDrafts() {
 const fetchArticles = async () => {
     try {
         setOverlay(true)
-        const response = await api.get("/getDraftPosts",{
+        const response = await api.get("/articles/all_drafts",{
           headers: {
               Authorization: `Bearer ${token}`,
           }
       });
-        setArticles(response.data.data.posts)
+        setArticles(response.data.data)
     } catch (error) {
         
         console.log(error);
@@ -41,7 +41,7 @@ useEffect(() => {
     setSelectedItemId(id);
     try {
         setLoadId(id);
-        await api.delete(`deletePost/${id}`, {
+        await api.delete(`/articles/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -71,7 +71,6 @@ return (
     <Table striped bordered hover>
       <thead>
         <tr>
-          <th>#</th>
           <th>عنوان المسودة</th>
           <th>الميتا دسكريبشن</th>
           <th>الكلمات المفتاحيه</th>
@@ -85,9 +84,9 @@ return (
       ) : (
         <tbody>
           {articles.map((item, index) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.Title}</td>
+            <tr key={item._id}>
+              <td>{item._id}</td>
+              <td>{item.title}</td>
               <td>
                 {item.meta_description &&
                   renderLimitedText(item.meta_description, 60)}
@@ -107,7 +106,7 @@ return (
               {role==='admin'&&<DeleteItem
                 id={selectedItemId}
                 setId={setSelectedItemId}
-                itemId={item.id}
+                itemId={item._id}
                 DeleteFun={handleDelete}
                 load={loadId}
               />}

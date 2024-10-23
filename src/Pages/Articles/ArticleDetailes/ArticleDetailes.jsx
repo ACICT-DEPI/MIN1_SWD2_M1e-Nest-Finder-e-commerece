@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Row, Col, Alert, Button } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import "./ArticleDetailes.css";
@@ -22,9 +22,9 @@ export default function ArticleDetailes() {
     const fetchArticle = async () => {
       try {
         setOverlay(true);
-        const response = await api.get(`/getPostByUrl/${id}`);
-        setArticle(response.data.data.posts[0]);
-        setRelatedPosts(response.data.data.related_posts)
+        const response = await api.get(`/articles/${id}`);
+        setArticle(response.data.data);
+        setRelatedPosts(response.data.related_posts)
       } catch (error) {
         setArticle("");
         console.log(error);
@@ -37,7 +37,7 @@ export default function ArticleDetailes() {
 
   // Set default SEO settings
   usePageSEO({
-    title: article.Title || "مقالات",
+    title: article.title || "مقالات",
     description: article.meta_description || "",
     keywords: article.key_words ? article.key_words.split(",") : [],
   });
@@ -51,18 +51,18 @@ export default function ArticleDetailes() {
           {article ? (
             <>
               <h1 className="text-center title-page py-1 pb-2 container my-3">
-                {article.Title}
+                {article.title}
               </h1>
               <Container dir="rtl">
                 <Row className="detailes-page">
                   <Col>
                     <div style={{ position: "relative" }}>
                       <img
-                        src={article.Article_image}
-                        alt={article.Title}
+                        src={article.article_image}
+                        alt={article.title}
                         className="main-title-img"
                       />
-                      {article.category_name && (
+                      {article.category_id&& (
                         <span
                           style={{
                             position: "absolute",
@@ -71,10 +71,10 @@ export default function ArticleDetailes() {
                           }}
                         >
                           <Link
-                            to={`/blog/type/${article.category_name}`}
+                            to={`/blog/type/${article.category_id.category_name}`}
                             className="categoryLink"
                           >
-                            {article.category_name.replace(/-/g, " ")}
+                            {article.category_id.category_name.replace(/-/g, " ")}
                           </Link>
                         </span>
                       )}
@@ -84,14 +84,15 @@ export default function ArticleDetailes() {
                       <div
                         className="articleCont"
                         dangerouslySetInnerHTML={{
-                          __html: article.Article_body,
+                          __html: article.article_body,
                         }}
                       />
                     </div>
                     {article.tags && article.tags.length > 0 ? (
                       <div className="tag-cont">
-                        {article.tags.map((tag) => (
+                        {article.tags.map((tag,index) => (
                           <Button
+                          key={index}
                             as={Link}
                             to={`/blog/tags/${tag.replace(/ /g, "-")}`}
                             variant="outline-info"
@@ -126,14 +127,14 @@ export default function ArticleDetailes() {
 
           <hr />
           <Container>
-            <CommentCard post_id={article.id} />
+            <CommentCard article_id={article._id} />
             <hr />
-            <AddComment id={article.id} />
+            <AddComment article_id={article._id} />
           </Container>
           <Footer />
           <Share
-            text={`مدونه عن ${article.Title} فى موقع Nest Finder`}
-            url={`http://varnda.com/blog/${encodeURIComponent(id)}`}
+            text={`مدونه عن ${article.title} فى موقع Nest Finder`}
+            url={`https://depi-final-project.vercel.app//blog/${encodeURIComponent(id)}`}
           />
         </>
       )}

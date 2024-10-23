@@ -2,11 +2,11 @@
 import Delete from "@mui/icons-material/Delete";
 
 export default function DeleteImage({setOld,setDel,OldImages,DeleteImages,img}) {
-  
+console.log(OldImages)
   function handleDeleteImage(delImage){
-    setDel([...DeleteImages,delImage])
-    let olded=OldImages.filter((e)=>e.image!=delImage)
+    let olded=OldImages.filter((e)=>e!=delImage)
     setOld(olded)
+    setDel([...DeleteImages,delImage])
   }
 
   return (

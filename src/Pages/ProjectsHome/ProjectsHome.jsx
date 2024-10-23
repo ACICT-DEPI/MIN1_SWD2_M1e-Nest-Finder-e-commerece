@@ -31,7 +31,7 @@ export default function ProjectsHome() {
     const fetchAllGov = async () => {
       try {
         setOverlay(true);
-        const response = await api.get("/getAllGovernoratesForHomepage");
+        const response = await api.get("/governorates");
         setAllGov(response.data.data);
       } catch (err) {
         setAllGov([]);
@@ -47,7 +47,7 @@ export default function ProjectsHome() {
     const fetchAllCity = async () => {
       try {
         setOverlay(true);
-        const response = await api.get(`/getGovCities/${formData.gov}`);
+        const response = await api.get(`/cities/${formData.gov}`);
         setAllCities(response.data.data);
       } catch (err) {
         setAllCities([]);
@@ -66,7 +66,7 @@ export default function ProjectsHome() {
     const fetchAllCompound = async () => {
       try {
         setOverlay(true);
-        const response = await api.get(`/getCityCompounds/${formData.city}`);
+        const response = await api.get(`/compounds/${formData.city}`);
         setAllCompounds(response.data.data);
       } catch (err) {
         setAllCompounds([]);
@@ -96,22 +96,20 @@ export default function ProjectsHome() {
             {allGov.length > 0 && !formData.gov && (
               <Row className="g-3 my-1">
                 {allGov.map(
-                  (gov) =>
-                    gov.url && (
-                      <Col sm={6} md={4} lg={3}  className="text-center">
+                  (gov,index) =>
+                      <Col sm={6} md={4} lg={3}  className="text-center" key={index}>
                         <button
                         className="project-btn" 
                           onClick={() => {
                             setFormData({
                               ...formData,
-                              gov: gov.url,
+                              gov: gov.id,
                             });
                           }}
                         >
                           {gov.name}
                         </button>
                       </Col>
-                    )
                 )}
               </Row>
             )}
@@ -120,20 +118,19 @@ export default function ProjectsHome() {
               <>
                 <Row className="g-3">
                   {allCities.map(
-                    (city) =>
-                      city.url && (
-                        <Col md={6} lg={4} className="text-center" >
+                    (city,index) =>
+                        <Col md={6} lg={4} className="text-center" key={index} >
                           <button className="project-btn" onClick={() => {
                               setFormData({
                                 ...formData,
-                                city: city.url,
+                                city: city.id,
                               });
                             }}>
                           {city.name}
                           </button>
                         </Col>
                       )
-                  )}
+                  }
                   <div className="d-flex justify-content-end my-2">
                     <Button
                       style={{ direction: "ltr" }}
@@ -156,12 +153,11 @@ export default function ProjectsHome() {
             {allCompounds.length > 0 ? (
               <Row className="g-3 justify-content-center">
                 {allCompounds.map(
-                  (compound) =>
-                    compound.url && (
-                      <Col md={9} lg={8} className="text-center">
+                  (compound,index) =>
+                      <Col md={9} lg={8} className="text-center" key={index}>
                         <Link
                           to={`/projects/${compound.url}`}
-                          key={compound.url}
+                          key={compound.id}
                           className="project-link"
                         >
                           <button className="project-btn">
@@ -169,7 +165,6 @@ export default function ProjectsHome() {
                           </button>
                         </Link>
                       </Col>
-                    )
                 )}
               </Row>
             ) :formData.city? 
