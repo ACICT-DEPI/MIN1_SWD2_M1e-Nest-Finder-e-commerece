@@ -24,7 +24,9 @@ usePageSEO({
   const [show, setShow] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [alert, setAlert] = useState({ msg: "", variant: 0 });
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    role:'user'
+  });
   const isValidPhone = (phoneNumber) => {
     const egPhone = /^(010|011|012|015)\d{8}$/;
     return egPhone.test(phoneNumber);

@@ -105,15 +105,15 @@ const PropertiesTable = ({ data }) => {
       <tbody>
         {data.map((item, index) => (
           <tr key={item.id} className="text-center">
-            <td>{item.property.name_ad_ar}</td>
-            <td>{item.property.category}</td>
-            <td>{item.property.sub_category}</td>
+            <td>{item.property_id.name_ad_ar}</td>
+            <td>{item.property_id.category}</td>
+            <td>{item.property_id.sub_category}</td>
             <td>
               <Link to={`/property/${item.slug}`}>الذهاب للاعلان</Link>
             </td>
             <td>
               {format(
-                new Date(item.property.created_at),
+                new Date(item.property_id.created_at),
                 "dd-MM-yyyy HH:mm:ss"
               )}
             </td>
@@ -121,7 +121,7 @@ const PropertiesTable = ({ data }) => {
               <Button
                 variant="warning"
                 onClick={() =>
-                  handleEdit(item.ad_type, item.property.category, data[index])
+                  handleEdit(item.ad_type, item.property_id.category, data[index])
                 }
               >
                 تعديل
