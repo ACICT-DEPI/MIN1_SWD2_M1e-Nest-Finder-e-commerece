@@ -1,6 +1,6 @@
 import axios from "axios";
 const instance = axios.create({
-  // baseURL: 'https://back.varnda.com/api',
-  baseURL: 'http://localhost:8000/api',
+  //baseURL: 'http://localhost:8000/api',
+  baseURL: 'https://depi-final-project-backend-production.up.railway.app/api',
 });
 export default instance;
